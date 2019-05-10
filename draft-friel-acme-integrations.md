@@ -33,7 +33,7 @@ ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an ap
 - ACME integration with EST {{?RFC7030}}
 - ACME integration with BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}}
 - ACME integration with TEAP {{?RFC7170}}
-- ACME integration with TEAP-BRSKI {{I-D.lear-eap-teap-brski}}
+- ACME integration with TEAP-BRSKI draft-lear-eap-teap-brski
 
 # Terminology
 
@@ -480,7 +480,7 @@ This section outlines how ACME could be used for communication between the TEAP 
 
 # ACME Integration with TEAP-BRSKI
 
-TEAP-BRSKI {{I-D.lear-eap-teap-brski}} defines...  and its very similar to the TEAP proposal in the prevous section.
+TEAP-BRSKI draft-lear-eap-teap-brski defines...  and its very similar to the TEAP proposal in the prevous section.
 
 # IANA Considerations
 
