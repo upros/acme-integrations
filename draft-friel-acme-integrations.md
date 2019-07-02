@@ -337,6 +337,8 @@ TEAP {{?RFC7170}} define a tunnel-based EAP method that enables secure communica
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The TEAP server could of course prove ownership of every explicit client certificate identifier.
 
+[todo: Similar to the previous section, it is TBD exactly how the Pledge determines what Subject/SAN to put in the CSR request.]
+
 ~~~
 +--------+             +-------------+           +------+     +-----+
 | Pledge |             | TEAP-Server |           | ACME |     | DNS |
@@ -477,7 +479,114 @@ This section outlines how ACME could be used for communication between the TEAP 
 
 # ACME Integration with TEAP-BRSKI
 
-TEAP-BRSKI draft-lear-eap-teap-brski defines...  and its very similar to the TEAP proposal in the prevous section.
+TEAP-BRSKI {{?I-D.lear-eap-teap-brski}} defines how to execute BRSKI at layer 2 inside a TEAP tunnel. Similar to the TEAP proposal in the prevous section, BRSKI-TEAP leverages the existing TEAP PKXS#10 and PKCS#7 mechanisms for certificate enrollment, and does not define how the TEAP server communicates with the CA.
+
+This section outlines how ACME could be used for communication between the TEAP server and the CA, and how this fits in with the TEAP-BRSKI proposal.
+
+[todo: Similar to the previous section, it is TBD exactly how the Pledge determines what Subject/SAN to put in the CSR request.]
+
+
+~~~
++--------+                +-------------+         +------+   +------+
+| Pledge |                | TEAP-Server |         | ACME |   | MASA |
++--------+                +-------------+         +------+   +------+
+    |                            |                     |           |
+               NOTE: Pre-Authorization of "domain.com" is complete
+               and EAP outer tunnel is established as outlined in
+               the previous section
+    |                            |                     |         |               
+               STEP 1: Perform BRSKI Flow
+    |                            |                     |         |
+    | EAP-Request/               |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Request-Action TLV:      |                     |         |
+    |    Status=Failure,         |                     |         |
+    |    Action=Process-TLV,     |                     |         |
+    |    TLV=Request-Voucher,    |                     |         |
+    |    TLV=Trusted-Server-Root,|                     |         |
+    |    TLV=CSR-Attributes,     |                     |         |
+    |    TLV=PKCS#10}            |                     |         |
+    |<---------------------------|                     |         |
+    |                            |                     |         |
+    | EAP-Response/              |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Request-Voucher TLV}     |                     |         |
+    |--------------------------->| RequestVoucher      |         |
+    |                            |-------------------/ | \------>|
+    |                            |    Voucher          |         |
+    |                            |<------------------/ | \-------|
+    | EAP-Request/               |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Voucher TLV}             |                     |         |
+    |<---------------------------|                     |         |
+    |                            |                     |         |
+               STEP 2: Retrieve CA Configuration
+    |                            |                     |         |
+    | EAP-Response/              |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Trusted-Server-Root TLV} |                     |         |
+    |--------------------------->|                     |         |
+    |                            |                     |         |
+    | EAP-Request/               |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Trusted-Server-Root TLV} |                     |         |
+    |<---------------------------|                     |         |
+    |                            |                     |         |
+    | EAP-Response/              |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {CSR-Attributes TLV}      |                     |         |
+    |--------------------------->|                     |         |
+    |                            |                     |         |
+    | EAP-Request/               |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {CSR-Attributes TLV}      |                     |         |
+    |<---------------------------|                     |         |
+    |                            |                     |         |
+               STEP 3: Enroll for certificate
+    |                            |                     |         |
+    | EAP-Response/              |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |   {PKCS#10 TLV:            |                     |         |
+    |   "pledgeid.domain.com"}   |                     |         |
+    |--------------------------->|                     |         |
+    |                            |POST /newOrder       |         |
+    |                            |"pledgeid.domain.com"|         |
+    |                            |-------------------->|         |
+    |                            |                     |         |
+    |                            | 201 status=ready    |         |
+    |                            |<--------------------|         |
+    |                            |                     |         |
+    |                            |POST /finalize       |         |
+    |                            |PKCS#10 CSR          |         |
+    |                            |"pledgeid.domain.com"|         |
+    |                            |-------------------->|         |
+    |                            |                     |         |
+    |                            | 200 OK status=valid |         |
+    |                            |<--------------------|         |
+    |                            |                     |         |
+    |                            | POST /certificate   |         |
+    |                            |-------------------->|         |
+    |                            |                     |         |
+    |                            |200 OK               |         |
+    |                            |PEM                  |         |
+    |                            |"pledgeid.domain.com"|         |
+    |                            |<--------------------|         |
+    |                            |                     |         |
+    | EAP-Request/               |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {PKCS#7 TLV,              |                     |         |
+    |   Result TLV=Success}      |                     |         |
+    |<---------------------------|                     |         |
+    |                            |                     |         |
+    | EAP-Response/              |                     |         |
+    |  Type=TEAP,                |                     |         |
+    |  {Result TLV=Success}      |                     |         |
+    |--------------------------->|                     |         |
+    |                            |                     |         |
+    | EAP-Success                |                     |         |
+    |<---------------------------|                     |         |
+
+~~~
 
 # IANA Considerations
 
