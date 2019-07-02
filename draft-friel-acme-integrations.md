@@ -82,32 +82,13 @@ A typical ACME workflow for issuance of certificates is as follows:
 
 ACME places the following restrictions on "identifiers":
 
-- section 7.1.4: the only type of "identifier" defined by the ACME specification is a fully qualified domain name
+- section 7.1.4: the only type of "identifier" defined by the ACME specification is a fully qualified domain name: "The only type of identifier defined by this specification is a fully qualified domain name (type: "dns"). The domain name MUST be encoded in the form in which it would appear in a certificate."
 
-~~~
-The only type of identifier defined by this specification is a fully qualified domain name (type: "dns"). The domain name MUST be encoded in the form in which it would appear in a certificate.
-~~~
+- Section 7.4: the "identifier" in the CSR request must match the "identifier" in the newOrder request: "The CSR MUST indicate the exact same set of requested identifiers as the initial newOrder request."
 
-- Section 7.4: the "identifier" in the CSR request must match the "identifier" in the newOrder request
+- Sections 8.3: the "identifier", or FQDN, in the "authorization" object must be used when fulfilling challenges via HTTP: "Construct a URL by populating the URL template ... where the domain field is set to the domain name being verified"
 
-~~~
-The CSR MUST indicate the exact same set of requested identifiers as the initial newOrder request.
-~~~
-
-- Sections 8.3 and 8.4: the "identifier", or FQDN, in the "authorization" object must be used when fulfilling challenges via HTTP or DNS mechanisms
-
-~~~
-Construct a URL by populating the URL template [RFC6570]
-"http://{domain}/.well-known/acme-challenge/{token}", where:
-
- *  the domain field is set to the domain name being verified
-~~~
-
-~~~
-The client constructs the validation domain name by
-prepending the label "_acme-challenge" to the domain name being
-validated
-~~~
+- Section 8.4: the "identifier", or FQDN, in the "authorization" object must be used when fulfilling challenges via DNS: "The client constructs the validation domain name by prepending the label "_acme-challenge" to the domain name being validated."
 
 ACME does not mandate that the "identifier" in a newOrder request matches the "identifier" in "authorization" objects. This means that the ACME specification does not preclude an ACME server processing newOrder requests and issuing certificates for a subdomain without requiring a challenge to be fulfilled against that explicit subdomain. ACME server policy could allow issuance of certificates for a subdomain to a client where the client only has to fulfill an authorization challenge for the parent domain.
 
@@ -176,25 +157,23 @@ The client could pre-authorize for the parent domain once, and then issue multip
 
 EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending CMC messages over HTTP. EST section 1 states:
 
-~~~
-Architecturally, the EST service is located between a Certification Authority (CA) and a client.  It performs several functions traditionally allocated to the Registration Authority (RA) role in a PKI.
-~~~
+"Architecturally, the EST service is located between a Certification Authority (CA) and a client.  It performs several functions traditionally allocated to the Registration Authority (RA) role in a PKI."
 
 EST section 1.1 states that:
 
-~~~
-For certificate issuing services, the EST CA is reached through the EST server; the CA could be logically "behind" the EST server or embedded within it.
-~~~
+"For certificate issuing services, the EST CA is reached through the EST server; the CA could be logically "behind" the EST server or embedded within it."
 
 When the CA is logically "behind" the EST RA, EST does not specify how the RA communicates with the CA. EST section 1 states:
 
-~~~
-The nature of communication between an EST server and a CA is not described in this document.
-~~~
+"The nature of communication between an EST server and a CA is not described in this document."
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
-The call flow also illustrates how the RA can include relevant domain information in the CSR request to ACME that the client may not have knowledge of. For example, a device or pledge may know its MAC address and serial number and only include that as its identifier in a CSR request. The RA could insert the domain information into the CSR request. Additionally, for privacy reasons, the RA may not want to divulge MAC or serial number information to the CA and could additionally assign an opaque random identifier to the device.
+The call flow also illustrates how the Pledge inserts relevant domain information into the CSR Subject and Subject Alternative Name fields.
+
+[todo: The details of how the pledge determines what information to include in the CSR are TBD. For example, the pledge could discover the DNS domain via DHCP Option 15, and prepend the identifier from the IDevID to this.
+
+Note also that EST https://tools.ietf.org/html/rfc7030#section-4.2.1 states that the ChangeSubjectName attribute MAY be used, for example, if the Pledge uses its IDevID when requesting a CSR/LDevID with a different Subject, howvever this field does not appear to have widespread support across CAs.]
 
 ~~~
 +--------+             +--------+             +------+     +-----+
@@ -228,7 +207,8 @@ The call flow also illustrates how the RA can include relevant domain informatio
                STEP 2: Pledge enrolls against RA
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
-    | PCSK#10 "MAC/serial" |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -237,14 +217,15 @@ The call flow also illustrates how the RA can include relevant domain informatio
                STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledgeX.domain.com" |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
     |                      |<---------------------|           |
     |                      |                      |           |
     |                      | POST /finalize       |           |
-    |                      | CSR "pledgeX.domain.com"         |
+    |                      | PKCS#10 CSR          |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -254,17 +235,20 @@ The call flow also illustrates how the RA can include relevant domain informatio
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK               |           |
-    |                      | PKI "pledgeX.domain.com"         |
+    |                      | PEM                  |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |<---------------------|           |
     |                      |                      |           |
                STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
-    | PCSK#10 "MAC/serial" |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
-    | 200 OK               |
-    | PKCS#7 "pledgeX.domain.com"                 |           | 
+    | 200 OK               |                      |           |
+    | PKCS#7               |                      |           |
+    | "pledgeid.domain.com"|                      |           | 
     |<---------------------|                      |           |
 ~~~
 
@@ -275,6 +259,8 @@ The call flow also illustrates how the RA can include relevant domain informatio
 BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}} is based upon EST {{?RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certicicate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
 
 The following call flow shows how ACME may be integated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The doain owernship excahnges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
+
+[todo: similar to the EST section above, it is TBD exactly how the pledge determiens what domain information to insert in the CSR. A possibility is that the Voucher response includes domain information and explicitly instructs the pledge what information to insert in the CSR. The RA could also instruct the Pledge to include a guid or a new unique random identifier in place of its MAC address, serial number, or whatever other identifying information is included in the IDevID.
 
 ~~~
 +--------+             +--------+             +------+     +------+
@@ -298,7 +284,8 @@ The following call flow shows how ACME may be integated into a full BRSKI vouche
                STEP 2: Pledge enrolls against RA
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
-    | PCSK#10 "MAC/serial" |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -307,14 +294,15 @@ The following call flow shows how ACME may be integated into a full BRSKI vouche
                STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledgeX.domain.com" |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
     |                      |<---------------------|           |
     |                      |                      |           |
     |                      | POST /finalize       |           |
-    |                      | CSR "pledgeX.domain.com"         |
+    |                      | PKCS#10 CSR          |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -324,17 +312,20 @@ The following call flow shows how ACME may be integated into a full BRSKI vouche
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK               |           |
-    |                      | PKI "pledgeX.domain.com"         |
+    |                      | PEM                  |           |
+    |                      | "pledgeid.domain.com"|           |
     |                      |<---------------------|           |
     |                      |                      |           |
                STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
-    | PCSK#10 "MAC/serial" |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
-    | 200 OK               |
-    | PKCS#7 "pledgeX.domain.com"                 |           | 
+    | 200 OK               |                      |           |
+    | PKCS#7               |                      |           |
+    | "pledgeid.domain.com"|                      |           | 
     |<---------------------|                      |           |
 ~~~
 
@@ -442,17 +433,18 @@ This section outlines how ACME could be used for communication between the TEAP 
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
     |   {PKCS#10 TLV:         |                      |           |
-    |   SAN:"MAC/serial"}     |                      |           |
+    |   "pledgeid.domain.com"}|                      |           |
     |------------------------>|                      |           |
     |                         | POST /newOrder       |           |
-    |                         | "pledgeX.domain.com" |           |
+    |                         | "pledgeid.domain.com"|           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 201 status=ready     |           |
     |                         |<---------------------|           |
     |                         |                      |           |
     |                         | POST /finalize       |           |
-    |                         | CSR "pledgeX.domain.com"         |
+    |                         | PKCS#10 CSR          |           |
+    |                         | "pledgeid.domain.com"|           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 200 OK status=valid  |           |
@@ -462,7 +454,8 @@ This section outlines how ACME could be used for communication between the TEAP 
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 200 OK               |           |
-    |                         | PKI "pledgeX.domain.com"         |
+    |                         | PEM                  |           |
+    |                         | "pledgeid.domain.com"|           |
     |                         |<---------------------|           |
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
