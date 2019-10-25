@@ -1,7 +1,7 @@
 ---
 
 title: "ACME Integrations"
-abbrev: ATLS
+abbrev: ACME-INTEGRATIONS
 docname: draft-friel-acme-integrations-latest
 category: info
 
