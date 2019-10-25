@@ -3,7 +3,7 @@
 title: "ACME Integrations"
 abbrev: ATLS
 docname: draft-friel-acme-integrations-latest
-category: std
+category: info
 
 stand_alone: yes
 pi: [toc, sortrefs, symrefs]
@@ -19,11 +19,16 @@ author:
     name: Richard Barnes
     org: Cisco
     email: rlb@ipv.sx
+ -
+    ins: R. Shekh-Yusef
+    name: Rifaat Shekh-Yusef
+    org: Avaya
+    email: rifaat.ietf@gmail.com
 
 --- abstract
 
 
-This document outlines multiple advanced use cases and integrations that ACME facilitates without any modifications or enhancements required to the base ACME specification. These use cases are not immediately obvious from reading the ACME specification and thus are explicitly documented here. The use cases include ACME issuance of subdomain certificates, and ACME integration with EST and TEAP.
+This document outlines multiple advanced use cases and integrations that ACME facilitates without any modifications or enhancements required to the base ACME specification. The use cases include ACME integration with EST, BRSKI and TEAP.
 
 
 --- middle
@@ -33,11 +38,13 @@ This document outlines multiple advanced use cases and integrations that ACME fa
 
 ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
 
-- ACME issuance of subdomain certificates
 - ACME integration with EST {{?RFC7030}}
 - ACME integration with BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}}
+- ACME integration with BRSKI Default Cloud Registrar {{I-D.friel-anima-brski-cloud}}
 - ACME integration with TEAP {{?RFC7170}}
-- ACME integration with TEAP-BRSKI draft-lear-eap-teap-brski
+- ACME integration with TEAP-BRSKI {{?I-D.lear-eap-teap-brski}}
+
+The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrolment for devices. ACME for subdomains {{I-D.friel-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from a certificate authority where client has fulfilled a challenge against a parent domain but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimisation when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
 
 # Terminology
 
@@ -66,92 +73,6 @@ The following terms are used in this document:
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
 
-# ACME Issuance of Subdomain Certificates
-
-A typical ACME workflow for issuance of certificates is as follows:
-
-1. client POSTs a newOrder request that contains a set of "identifiers"
-
-2. server replies with a set of "authorizations" and a "finalize" URI
-
-3. client sends POST-as-GET requests to retrieve the "authorizations", with the downloaded "authorization" object(s) containing the "identifier" that the client must prove control of
-
-4. client proves control over the "identifier" in the "authorization" object by completing the specified challenge, for example, by publishing a DNS TXT record
-
-5. client POSTs a CSR to the "finalize" API
-
-ACME places the following restrictions on "identifiers":
-
-- section 7.1.4: the only type of "identifier" defined by the ACME specification is a fully qualified domain name: "The only type of identifier defined by this specification is a fully qualified domain name (type: "dns"). The domain name MUST be encoded in the form in which it would appear in a certificate."
-
-- Section 7.4: the "identifier" in the CSR request must match the "identifier" in the newOrder request: "The CSR MUST indicate the exact same set of requested identifiers as the initial newOrder request."
-
-- Sections 8.3: the "identifier", or FQDN, in the "authorization" object must be used when fulfilling challenges via HTTP: "Construct a URL by populating the URL template ... where the domain field is set to the domain name being verified"
-
-- Section 8.4: the "identifier", or FQDN, in the "authorization" object must be used when fulfilling challenges via DNS: "The client constructs the validation domain name by prepending the label "_acme-challenge" to the domain name being validated."
-
-ACME does not mandate that the "identifier" in a newOrder request matches the "identifier" in "authorization" objects. This means that the ACME specification does not preclude an ACME server processing newOrder requests and issuing certificates for a subdomain without requiring a challenge to be fulfilled against that explicit subdomain. ACME server policy could allow issuance of certificates for a subdomain to a client where the client only has to fulfill an authorization challenge for the parent domain.
-
-This allows a flow where a client proves ownership of "domain.com" and then successfully obtains a certificate for "sub.domain.com". The ACME pre-authorization flow makes most sense for this use case, and that is what is illustrated in the following call flow.
-
-The client could pre-authorize for the parent domain once, and then issue multiple newOrder requests for certificates for multiple subdomains. This call flow illustrates the client only placing one newOrder request.
-
-~~~
-
-+--------+             +------+     +-----+
-| Client |             | ACME |     | DNS |
-+--------+             +------+     +-----+
-    |                      |           |
- STEP 1: Pre-Authorization of parent domain
-    |                      |           |
-    | POST /newAuthz       |           |
-    |  "domain.com"        |           |
-    |--------------------->|           |
-    |                      |           |
-    | 201 authorizations   |           |
-    |<---------------------|           |
-    |                      |           |
-    | Publish DNS TXT      |           |
-    | "domain.com"         |           |
-    |--------------------------------->|
-    |                      |           |
-    | POST /challenge      |           |
-    |--------------------->|           |
-    |                      | Verify    |
-    |                      |---------->|
-    | 200 status=valid     |           |
-    |<---------------------|           |
-    |                      |           |
-    | Delete DNS TXT       |           |
-    | "domain.com"         |           |
-    |--------------------------------->|
-    |                      |           |
- STEP 2: Place order for subdomain
-    |                      |           |
-    | POST /newOrder       |           |
-    | "sub.domain.com"     |           |
-    |--------------------->|           |
-    |                      |           |
-    | 201 status=ready     |           |
-    |<---------------------|           |
-    |                      |           |
-    | POST /finalize       |           |
-    | CSR "sub.domain.com" |           |
-    |--------------------->|           |
-    |                      |           |
-    | 200 OK status=valid  |           |
-    |<---------------------|           |
-    |                      |           |
-    | POST /certificate    |           |
-    |--------------------->|           |
-    |                      |           |
-    | 200 OK               |           |
-    | PKI "sub.domain.com" |           |
-    |<---------------------|           |
-
-~~~
-
-
 
 # ACME Integration with EST
 
@@ -167,13 +88,10 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
-This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
+This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{I-D.friel-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
-The call flow also illustrates how the Pledge inserts relevant domain information into the CSR Subject and Subject Alternative Name fields.
+The call flow illustates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request send in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
 
-[todo: The details of how the pledge determines what information to include in the CSR are TBD. For example, the pledge could discover the DNS domain via DHCP Option 15, and prepend the identifier from the IDevID to this.
-
-Note also that EST https://tools.ietf.org/html/rfc7030#section-4.2.1 states that the ChangeSubjectName attribute MAY be used, for example, if the Pledge uses its IDevID when requesting a CSR/LDevID with a different Subject, however this field does not appear to have widespread support across CAs.]
 
 ~~~
 +--------+             +--------+             +------+     +-----+
@@ -205,6 +123,15 @@ Note also that EST https://tools.ietf.org/html/rfc7030#section-4.2.1 states that
     |                      |--------------------------------->|
     |                      |                      |           |
                STEP 2: Pledge enrolls against RA
+    |                      |                      |           |
+    | GET /csrattrs        |                      |           |
+    |--------------------->|                      |           |
+    |                      |                      |           |
+    | 200 OK               |                      |           |
+    | SEQUENCE {AttrOrOID} |                      |           |
+    | SAN OID:             |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
@@ -260,7 +187,7 @@ BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}} is based upon EST {{?RFC7030}} 
 
 The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
-[todo: similar to the EST section above, it is TBD exactly how the pledge determines what domain information to insert in the CSR. A possibility is that the Voucher response includes domain information and explicitly instructs the pledge what information to insert in the CSR. The RA could also instruct the Pledge to include a guid or a new unique random identifier in place of its MAC address, serial number, or whatever other identifying information is included in the IDevID.
+Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /cimpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API.
 
 ~~~
 +--------+             +--------+             +------+     +------+
@@ -282,6 +209,15 @@ The following call flow shows how ACME may be integrated into a full BRSKI vouch
     |<---------------------|                      |           |
     |                      |                      |           |
                STEP 2: Pledge enrolls against RA
+    |                      |                      |           |
+    | GET /csrattrs        |                      |           |
+    |--------------------->|                      |           |
+    |                      |                      |           |
+    | 200 OK               |                      |           |
+    | SEQUENCE {AttrOrOID} |                      |           |
+    | SAN OID:             |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
@@ -330,19 +266,98 @@ The following call flow shows how ACME may be integrated into a full BRSKI vouch
 ~~~
 
 
+# ACME Integration with BRSKI Default Cloud Registrar
+
+BRSKI Cloud Registrar {{I-D.friel-animabrski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
+
+BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the exension to {{?RFC8366}} Vouchers which is defined in ID-TBD and allows the specifiation of a bootstrap DNS domain is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+
+~~~
++--------+             +--------+            +------+     +----------+
+| Pledge |             | EST RA |            | ACME |     | Cloud RA |
++--------+             +--------+            +------+     |  / MASA  |
+    |                                                     +----------+
+    |                                                         |
+         NOTE: Pre-Authorization of "domain.com" is complete
+    |                                                         |
+         STEP 1: Pledge requests Voucher from Cloud Registrar
+    |                                                         |
+    | POST /requestvoucher                                    |
+    |-------------------------------------------------------->|
+    |                                                         |
+    | 200 OK Voucher (EST RA domain)                          |
+    |<--------------------------------------------------------|
+    |                      |                      |           |
+         STEP 2: Pledge enrolls against local domain RA
+    |                      |                      |           |
+    | GET /csrattrs        |                      |           |
+    |--------------------->|                      |           |
+    |                      |                      |           |
+    | 200 OK               |                      |           |
+    | SEQUENCE {AttrOrOID} |                      |           |
+    | SAN OID:             |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |<---------------------|                      |           |
+    |                      |                      |           |
+    | POST /simpleenroll   |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |--------------------->|                      |           |
+    |                      |                      |           |
+    | 202 Retry-After      |                      |           |
+    |<---------------------|                      |           |
+    |                      |                      |           |
+         STEP 3: RA places ACME order
+    |                      |                      |           |
+    |                      | POST /newOrder       |           |
+    |                      | "pledgeid.domain.com"|           |
+    |                      |--------------------->|           |
+    |                      |                      |           |
+    |                      | 201 status=ready     |           |
+    |                      |<---------------------|           |
+    |                      |                      |           |
+    |                      | POST /finalize       |           |
+    |                      | PKCS#10 CSR          |           |
+    |                      | "pledgeid.domain.com"|           |
+    |                      |--------------------->|           |
+    |                      |                      |           |
+    |                      | 200 OK status=valid  |           |
+    |                      |<---------------------|           |
+    |                      |                      |           |
+    |                      | POST /certificate    |           |
+    |                      |--------------------->|           |
+    |                      |                      |           |
+    |                      | 200 OK               |           |
+    |                      | PEM                  |           |
+    |                      | "pledgeid.domain.com"|           |
+    |                      |<---------------------|           |
+    |                      |                      |           |
+         STEP 4: Pledge retries enroll
+    |                      |                      |           |
+    | POST /simpleenroll   |                      |           |
+    | PCSK#10 CSR          |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |--------------------->|                      |           |
+    |                      |                      |           |
+    | 200 OK               |                      |           |
+    | PKCS#7               |                      |           |
+    | "pledgeid.domain.com"|                      |           |
+    |<---------------------|                      |           |
+~~~
+
 
 # ACME Integration with TEAP
 
-TEAP {{?RFC7170}} define a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP does not define how the TEAP server communicates with the CA.
+TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP does not define how the TEAP server communicates with the CA.
 
-This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The TEAP server could of course prove ownership of every explicit client certificate identifier.
+This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{I-D.friel-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-[todo: Similar to the previous section, it is TBD exactly how the Pledge determines what Subject/SAN to put in the CSR request.]
+The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV. For example, the TEAP server could instruct the peer what Subject or SAN entires to include in its CSR.
 
 ~~~
-+--------+             +-------------+           +------+     +-----+
-| Pledge |             | TEAP-Server |           | ACME |     | DNS |
-+--------+             +-------------+           +------+     +-----+
++------+                +-------------+           +------+     +-----+
+| Peer |                | TEAP-Server |           | ACME |     | DNS |
++------+                +-------------+           +------+     +-----+
     |                         |                      |           |
                STEP 1: Pre-Authorization of parent domain
     |                         |                      |           |
@@ -427,10 +442,21 @@ This section outlines how ACME could be used for communication between the TEAP 
     |   {Request-Action TLV:  |                      |           |
     |     Status=Failure,     |                      |           |
     |     Action=Process-TLV, |                      |           |
+    |     TLV=CSR-Attributes, |                      |           |
     |     TLV=PKCS#10}        |                      |           |
     |<------------------------|                      |           |
     |                         |                      |           |
                STEP 3: Enroll for certificate
+    |                         |                      |           | 
+    |  EAP-Response/          |                      |           |
+    |   Type=TEAP,            |                      |           |
+    |   {CSR-Attributes TLV}  |                      |           |
+    |------------------------>|                      |           |
+    |                         |                      |           |
+    |  EAP-Request/           |                      |           |
+    |   Type=TEAP,            |                      |           |
+    |   {CSR-Attributes TLV}  |                      |           |
+    |<------------------------|                      |           |
     |                         |                      |           |
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
@@ -483,8 +509,7 @@ TEAP-BRSKI {{?I-D.lear-eap-teap-brski}} defines how to execute BRSKI at layer 2 
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA, and how this fits in with the TEAP-BRSKI proposal.
 
-[todo: Similar to the previous section, it is TBD exactly how the Pledge determines what Subject/SAN to put in the CSR request.]
-
+Similar to baseline TEAP, the TEAP server can use the CSR-Atributes TLV to tell tell the peer what atributes to include in its CSR request.
 
 ~~~
 +--------+                +-------------+         +------+   +------+
