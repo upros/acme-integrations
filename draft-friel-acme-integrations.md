@@ -90,7 +90,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
-The call flow illustates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request send in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
+The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request send in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
 
 
 ~~~
@@ -270,7 +270,7 @@ Similar to the EST section above, the client calls EST /csrattrs API before call
 
 BRSKI Cloud Registrar {{?I-D.friel-anima-brski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
 
-BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the exension to {{?RFC8366}} Vouchers which is defined in [[TODO ID-TBD]] and allows the specifiation of a bootstrap DNS domain is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in [[TODO ID-TBD]] and allows the specification of a bootstrap DNS domain is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
 ~~~
 +--------+             +--------+            +------+     +----------+
@@ -352,7 +352,7 @@ TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV. For example, the TEAP server could instruct the peer what Subject or SAN entires to include in its CSR.
+The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV. For example, the TEAP server could instruct the peer what Subject or SAN entries to include in its CSR.
 
 ~~~
 +------+                +-------------+           +------+     +-----+
@@ -509,7 +509,7 @@ TEAP-BRSKI {{?I-D.lear-eap-teap-brski}} defines how to execute BRSKI at layer 2 
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA, and how this fits in with the TEAP-BRSKI proposal.
 
-Similar to baseline TEAP, the TEAP server can use the CSR-Atributes TLV to tell tell the peer what atributes to include in its CSR request.
+Similar to baseline TEAP, the TEAP server can use the CSR-Atributes TLV to tell the peer what attributes to include in its CSR request.
 
 ~~~
 +--------+                +-------------+         +------+   +------+
