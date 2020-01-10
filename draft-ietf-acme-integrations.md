@@ -2,7 +2,7 @@
 
 title: "ACME Integrations"
 abbrev: ACME-INTEGRATIONS
-docname: draft-friel-acme-integrations-latest
+docname: draft-ietf-acme-integrations-latest
 category: info
 
 stand_alone: yes
@@ -24,6 +24,11 @@ author:
     name: Rifaat Shekh-Yusef
     org: Avaya
     email: rifaat.ietf@gmail.com
+ -
+    ins: M. Richardson
+    name: Michael Richardson
+    org: Sandelman Software Works
+    email: mcr+ietf@sandelman.ca
 
 --- abstract
 
