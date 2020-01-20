@@ -49,7 +49,9 @@ ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an ap
 - ACME integration with TEAP {{?RFC7170}}
 - ACME integration with TEAP-BRSKI {{?I-D.lear-eap-teap-brski}}
 
-The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrolment for devices. ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from a certificate authority where client has fulfilled a challenge against a parent domain but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimisation when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
+The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrolment for devices.
+
+ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from a certificate authority where the client has fulfilled a challenge against a parent domain, but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimisation when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
 
 # Terminology
 
@@ -96,6 +98,10 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimisation that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request send in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
+
+The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the ACME server is unable to issue a certificate immediately.
+
+[[ TODO the 202 response should probably be returned by the EST RA only if ACME returns newOrder 'pending' or finalize 'processing' responses. How much detail should be included in this document? ]]
 
 
 ~~~
@@ -192,7 +198,9 @@ BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}} is based upon EST {{?RFC7030}} 
 
 The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
-Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /cimpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API.
+Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API.
+
+[[ TODO: the same question about 202 handling details as outlined in the EST section apply here. ]]
 
 ~~~
 +--------+             +--------+             +------+     +------+
@@ -359,6 +367,8 @@ This section outlines how ACME could be used for communication between the TEAP 
 
 The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV. For example, the TEAP server could instruct the peer what Subject or SAN entries to include in its CSR.
 
+[[ TODO: Hmm, this section probably needs to be deleted. It shows use of CSR-Attributes TLV which is not defined in RFC7170, and is only introduced in draft-lear-eap-teap-brski. We likely need CSR-Attributes TLV for in band cert enrollment. ]]
+
 ~~~
 +------+                +-------------+           +------+     +-----+
 | Peer |                | TEAP-Server |           | ACME |     | DNS |
@@ -514,7 +524,9 @@ TEAP-BRSKI {{?I-D.lear-eap-teap-brski}} defines how to execute BRSKI at layer 2 
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA, and how this fits in with the TEAP-BRSKI proposal.
 
-Similar to baseline TEAP, the TEAP server can use the CSR-Atributes TLV to tell the peer what attributes to include in its CSR request.
+The TEAP server uses the CSR-Atributes TLV to tell the peer what attributes to include in its CSR request.
+
+[[ TODO: probably need to describe how Retry-After TLV can be used when ACME returns  newOrder 'pending' or finalize 'processing' ]]
 
 ~~~
 +--------+                +-------------+         +------+   +------+
