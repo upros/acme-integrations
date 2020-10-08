@@ -515,9 +515,9 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
 
 # IANA Considerations
 
-[todo]
+This document does not make any requests to IANA.
 
-# Security Considerations 
+# Security Considerations
 
 [todo]
 
