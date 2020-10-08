@@ -59,7 +59,7 @@ ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 {{?RFC2119}} {{?RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
-   
+
 
 The following terms are used in this document:
 
@@ -519,7 +519,46 @@ This document does not make any requests to IANA.
 
 # Security Considerations
 
-[todo]
+{Review some considerations of ACME, TEAP, EST}
+
+Therefore, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
+
+The integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{RFC8555}} section 8.4.  The security considerations in RFC8555 says:
+
+   The DNS is a common point of vulnerability for all of these
+   challenges.  An entity that can provision false DNS records for a
+   domain can attack the DNS challenge directly and can provision false
+   A/AAAA records to direct the ACME server to send its HTTP validation
+   query to a remote server of the attacker's choosing.
+
+It is expected that the TEAP-EAP server/EST Registrar will perform DNS dynamic updates
+to a DNS primary server using {{RFC3007}} Dynamic updates, secured with with either SIG(0), or TSIG keys.
+
+A major source of vulnerability is the disclosure of these DNS key records.
+An attacker that has access to them, can provision their own certificates into the
+the name space of the entity.
+
+For many uses, this may allow the attacker to get access to some enterprise resource.
+When used to provision, for instance, a (SIP) phone system this would permit an attacker to impersonate a legitimate phone.
+Not only does this allow for redirection of phone calls, but possibly also toll fraud.
+
+## Denial of Service against ACME infrastructure
+
+The intermdiate node (the TEAP-EAP server, or the EST Registrar) should cache the resulting certificates such that if the communication with the pledge is lost, subsequent attempts
+to enroll will result in the cache certificate being returned.
+
+As many ACME servers have per-day, per-IP and per-subjectAltName limits, it is prudent not to request identical certificates too often.
+This could be due to operator or installer error, with multiple configuration resets occuring within a short period of time.
+
+The cache should be keyed by the complete contents of the Certificate Signing Request,
+and should not persist beyond the notAfter date in the certificate.
+
+This means that if the private/public keypair changes on the pledge, then a new certificate will be issued.
+If the the requested SubjectAltName changes, then a new certificate will be requested.
+
+In a case where a device is simply factory reset, and enrolls again, then the same certificate can be returned.
+
+
 
 --- back
 
