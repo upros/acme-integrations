@@ -279,7 +279,9 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 
 BRSKI Cloud Registrar {{?I-D.friel-anima-brski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
 
-BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in [[TODO ID-TBD]] and allows the specification of a bootstrap DNS domain is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.friel-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+
+Similar to the sectiosn above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
 ~~~
 +--------+             +--------+            +------+     +----------+
@@ -294,7 +296,7 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
     | POST /requestvoucher                                    |
     |-------------------------------------------------------->|
     |                                                         |
-    | 200 OK Voucher (EST RA domain)                          |
+    | 200 OK Voucher (includes 'est-domain')                  |
     |<--------------------------------------------------------|
     |                      |                      |           |
          STEP 2: Pledge enrolls against local domain RA
@@ -519,7 +521,25 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
 
 # Security Considerations 
 
-[todo]
+This draft is informational and makes no changes to the referenced specifications.
+All security considerations from these referenced documents are applicable here:
+
+- EST {{?RFC7030}}
+- BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}}
+- BRSKI Default Cloud Registrar {{?I-D.friel-anima-brski-cloud}}
+- TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
+
+One important point to consider is that the integration server, whether an EST RA or TEAP server, will be performing multiple operations including:
+
+- Handling inbound certificate requests from the client
+- Managing the ACME account, account URL and associated private key
+- Performing ACME challenge fulfilments which may involve publishing DNS TXT records, or writing files to HTTP webservers
+
+When performing challenge filfilment via DNS, the integration server must secure the credential needed for updating the DNS domain.
+Operators should consider restricting the integration server such that it can only update the DNS records for a specific zone or zones where ACME is required for client certificate enrolment automation.
+For example, if all IoT devices in an organisation enrol using EST against an EST RA, and all IoT devices will be issued certificates in a subdomain under iot.example.com, then the integration server could be issued a credential that only allows updating of DNS records in a zone that includes domains in the iot.example.com namespace, but does not allow updating of DNS records under any other example.com DNS namespace.
+
+When performing challenge fulfilment via writing files to HTTP webservers, write access should only be granted to a specific set of servers, and only to a specific set of directories for storage of challenge files.
 
 --- back
 
