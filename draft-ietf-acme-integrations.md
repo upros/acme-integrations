@@ -108,14 +108,14 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
                STEP 1: Pre-Authorization of parent domain
     |                      |                      |           |
     |                      | POST /newAuthz       |           |
-    |                      |  "domain.com"        |           |
+    |                      |  "example.com"       |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 authorizations   |           |
     |                      |<---------------------|           |
     |                      |                      |           |
     |                      | Publish DNS TXT      |           |
-    |                      | "domain.com"         |           |
+    |                      | "example.com"        |           |
     |                      |--------------------------------->|
     |                      |                      |           |
     |                      | POST /challenge      |           |
@@ -126,7 +126,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      |<---------------------|           |
     |                      |                      |           |
     |                      | Delete DNS TXT       |           |
-    |                      | "domain.com"         |           |
+    |                      | "example.com"        |           |
     |                      |--------------------------------->|
     |                      |                      |           |
                STEP 2: Pledge enrolls against RA
@@ -137,12 +137,12 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     | 200 OK               |                      |           |
     | SEQUENCE {AttrOrOID} |                      |           |
     | SAN OID:             |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -151,7 +151,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
                STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
@@ -159,7 +159,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      |                      |           |
     |                      | POST /finalize       |           |
     |                      | PKCS#10 CSR          |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -170,19 +170,19 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      |                      |           |
     |                      | 200 OK               |           |
     |                      | PEM                  |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
                STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "pledgeid.domain.com"|                      |           | 
+    | "pledge.example.com" |                      |           | 
     |<---------------------|                      |           |
 ~~~
 
@@ -203,7 +203,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 | Pledge |             | EST RA |             | ACME |     | MASA |
 +--------+             +--------+             +------+     +------+
     |                      |                      |           |
-               NOTE: Pre-Authorization of "domain.com" is complete
+               NOTE: Pre-Authorization of "example.com" is complete
     |                      |                      |           |
                STEP 1: Pledge requests Voucher
     |                      |                      |           |
@@ -225,12 +225,12 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
     | 200 OK               |                      |           |
     | SEQUENCE {AttrOrOID} |                      |           |
     | SAN OID:             |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -239,7 +239,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
                STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
@@ -247,7 +247,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
     |                      |                      |           |
     |                      | POST /finalize       |           |
     |                      | PKCS#10 CSR          |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -258,19 +258,19 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
     |                      |                      |           |
     |                      | 200 OK               |           |
     |                      | PEM                  |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
                STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "pledgeid.domain.com"|                      |           | 
+    | "pledge.example.com" |                      |           | 
     |<---------------------|                      |           |
 ~~~
 
@@ -287,7 +287,7 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
 +--------+             +--------+            +------+     |  / MASA  |
     |                                                     +----------+
     |                                                         |
-         NOTE: Pre-Authorization of "domain.com" is complete
+         NOTE: Pre-Authorization of "example.com" is complete
     |                                                         |
          STEP 1: Pledge requests Voucher from Cloud Registrar
     |                                                         |
@@ -305,12 +305,12 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
     | 200 OK               |                      |           |
     | SEQUENCE {AttrOrOID} |                      |           |
     | SAN OID:             |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -319,7 +319,7 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
          STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
@@ -327,7 +327,7 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
     |                      |                      |           |
     |                      | POST /finalize       |           |
     |                      | PKCS#10 CSR          |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -338,19 +338,19 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
     |                      |                      |           |
     |                      | 200 OK               |           |
     |                      | PEM                  |           |
-    |                      | "pledgeid.domain.com"|           |
+    |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
          STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "pledgeid.domain.com"|                      |           |
+    | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
 ~~~
 
@@ -373,14 +373,14 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
                STEP 1: Pre-Authorization of parent domain
     |                         |                      |           |
     |                         | POST /newAuthz       |           |
-    |                         |  "domain.com"        |           |
+    |                         |  "example.com"       |           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 201 authorizations   |           |
     |                         |<---------------------|           |
     |                         |                      |           |
     |                         | Publish DNS TXT      |           |
-    |                         | "domain.com"         |           |
+    |                         | "example.com"        |           |
     |                         |--------------------------------->|
     |                         |                      |           |
     |                         | POST /challenge      |           |
@@ -391,7 +391,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |<---------------------|           |
     |                         |                      |           |
     |                         | Delete DNS TXT       |           |
-    |                         | "domain.com"         |           |
+    |                         | "example.com"        |           |
     |                         |--------------------------------->|
     |                         |                      |           |
     |                         |                      |           |
@@ -472,10 +472,10 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
     |   {PKCS#10 TLV:         |                      |           |
-    |   "pledgeid.domain.com"}|                      |           |
+    |   "pledge.example.com"} |                      |           |
     |------------------------>|                      |           |
     |                         | POST /newOrder       |           |
-    |                         | "pledgeid.domain.com"|           |
+    |                         | "pledge.example.com" |           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 201 status=ready     |           |
@@ -483,7 +483,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |                      |           |
     |                         | POST /finalize       |           |
     |                         | PKCS#10 CSR          |           |
-    |                         | "pledgeid.domain.com"|           |
+    |                         | "pledge.example.com" |           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 200 OK status=valid  |           |
@@ -494,7 +494,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |                      |           |
     |                         | 200 OK               |           |
     |                         | PEM                  |           |
-    |                         | "pledgeid.domain.com"|           |
+    |                         | "pledge.example.com" |           |
     |                         |<---------------------|           |
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
