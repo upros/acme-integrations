@@ -542,7 +542,7 @@ The integration mechanisms proposed here will primarily use the DNS-01 challenge
    query to a remote server of the attacker's choosing.
 
 It is expected that the TEAP-EAP server/EST Registrar will perform DNS dynamic updates
-to a DNS primary server using {{RFC3007}} Dynamic updates, secured with with either SIG(0), or TSIG keys.
+to a DNS primary server using {{?RFC3007}} Dynamic updates, secured with with either SIG(0), or TSIG keys.
 
 A major source of vulnerability is the disclosure of these DNS key records.
 An attacker that has access to them, can provision their own certificates into the
