@@ -94,6 +94,12 @@ In all integrations, the client may send a CSR Attributes request to the EST or 
 
 When the EST or TEAP server downloads an issued certificate from the ACME server, it MAY include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555} section 7.4.2. This would avoid the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge. This behaviour is implementation specific and outside the scope of this document.
 
+[TODO] What level of info do we need on ACME error mapping to TEAP Error TLV or to CMCFailInfo https://datatracker.ietf.org/doc/html/rfc5272#section-6.1.4? 
+
+## Error Handling
+
+ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC response, or may return a human readable error in the response body.
+
 # ACME Integration with EST
 
 EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending CMC messages over HTTP. EST section 1 states:
