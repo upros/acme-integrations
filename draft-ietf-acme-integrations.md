@@ -80,6 +80,20 @@ The following terms are used in this document:
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
 
 
+# ACME Integration Considerations
+
+## Service Operators
+
+The goal of these integrations is enabling issuance of certificates with identitiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organisation that controls the domain. 
+
+## CSR Attributes
+
+In all integrations, the client may send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR reques. For example, servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields, or servers could use this field to instruct the client to include specific policy OIDs. The exact mechanism by which a server decides what attributes and attribute values to specify in the CSR Attributes response is out of scope of this document.
+
+## Certification Encoding
+
+When the EST or TEAP server downloads an issued certificate from the ACME server, it MAY include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555} section 7.4.2. This would avoid the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge. This behaviour is implementation specific and outside the scope of this document.
+
 # ACME Integration with EST
 
 EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending CMC messages over HTTP. EST section 1 states:
@@ -96,11 +110,9 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
-The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request sent in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
+The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. 
 
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
-
-When the EST RA downloads the certificate from the ACME server, it may include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555} section 7.4.2. This would avoid the EST RA having to covert the certificate into PKCS#7 format before returning it to the Pledge.
 
 ~~~
 +--------+             +--------+             +------+     +-----+
@@ -171,7 +183,7 @@ When the EST RA downloads the certificate from the ACME server, it may include a
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK               |           |
-    |                      | PEM                  |           |
+    |                      | PKCS#7               |           |
     |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
@@ -261,7 +273,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK               |           |
-    |                      | PEM                  |           |
+    |                      | PKCS#7               |           |
     |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
@@ -343,7 +355,7 @@ Similar to the sectiosn above, the client calls EST /csrattrs API before calling
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK               |           |
-    |                      | PEM                  |           |
+    |                      | PKCS#7               |           |
     |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
@@ -499,7 +511,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 200 OK               |           |
-    |                         | PEM                  |           |
+    |                         | PKCS#7               |           |
     |                         | "pledge.example.com" |           |
     |                         |<---------------------|           |
     |                         |                      |           |
