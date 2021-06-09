@@ -48,7 +48,7 @@ ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an ap
 - ACME integration with BRSKI Default Cloud Registrar {{?I-D.friel-anima-brski-cloud}}
 - ACME integration with TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
 
-The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrolment for devices.
+The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
 
 ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from a certificate authority where the client has fulfilled a challenge against a parent domain, but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimization when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
 
@@ -99,6 +99,8 @@ This section outlines how ACME could be used for communication between the EST R
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the EST server to indicate to the client what attributes it expects the client to include in the CSR request sent in the /simpleenroll API. For example, EST servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields.
 
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
+
+When the EST RA downloads the certificate from the ACME server, it may include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555} section 7.4.2. This would avoid the EST RA having to covert the certificate into PKCS#7 format before returning it to the Pledge.
 
 ~~~
 +--------+             +--------+             +------+     +-----+
@@ -552,8 +554,8 @@ For many uses, this may allow the attacker to get access to some enterprise reso
 When used to provision, for instance, a (SIP) phone system this would permit an attacker to impersonate a legitimate phone.
 Not only does this allow for redirection of phone calls, but possibly also toll fraud.
 
-Operators should consider restricting the integration server such that it can only update the DNS records for a specific zone or zones where ACME is required for client certificate enrolment automation.
-For example, if all IoT devices in an organisation enrol using EST against an EST RA, and all IoT devices will be issued certificates in a subdomain under iot.example.com, then the integration server could be issued a credential that only allows updating of DNS records in a zone that includes domains in the iot.example.com namespace, but does not allow updating of DNS records under any other example.com DNS namespace.
+Operators should consider restricting the integration server such that it can only update the DNS records for a specific zone or zones where ACME is required for client certificate enrollment automation.
+For example, if all IoT devices in an organisation enroll using EST against an EST RA, and all IoT devices will be issued certificates in a subdomain under iot.example.com, then the integration server could be issued a credential that only allows updating of DNS records in a zone that includes domains in the iot.example.com namespace, but does not allow updating of DNS records under any other example.com DNS namespace.
 
 When performing challenge fulfilment via writing files to HTTP webservers, write access should only be granted to a specific set of servers, and only to a specific set of directories for storage of challenge files.
 
@@ -565,7 +567,7 @@ to enroll will result in the cache certificate being returned.
 As many ACME servers have per-day, per-IP and per-subjectAltName limits, it is prudent not to request identical certificates too often.
 This could be due to operator or installer error, with multiple configuration resets occuring within a short period of time.
 
-The cache should be keyed by the complete contents of the Certificate Signing Request,
+The cache should be indexed by the complete contents of the Certificate Signing Request,
 and should not persist beyond the notAfter date in the certificate.
 
 This means that if the private/public keypair changes on the pledge, then a new certificate will be issued.
