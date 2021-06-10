@@ -100,6 +100,20 @@ When the EST or TEAP server downloads an issued certificate from the ACME server
 
 ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC response, or may return a human readable error in the response body.
 
+The following mapping from ACME errors to CMC {{RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
+
+~~~
++--------------------+-----------------+---------------------------------------------------+
+| ACME               | CMCFailInfo     | TEAP Error Code                                   |
++--------------------+-----------------+---------------------------------------------------+
+| badCSR             | badRequest      | 1025 Bad Certificate Signing Request              |
+| caa                | badRequest      | 1025 Bad Certificate Signing Request              |
+| rejectedIdentifier | badIdentity     | 1024  Bad Identity In Certificate Signing Request |
+| all other errors   | internalCAError | 1026  Internal CA Error                           |
++--------------------+-----------------+---------------------------------------------------+
+
+~~~
+
 # ACME Integration with EST
 
 EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending CMC messages over HTTP. EST section 1 states:
