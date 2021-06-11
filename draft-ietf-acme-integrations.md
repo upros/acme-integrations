@@ -84,15 +84,19 @@ The following terms are used in this document:
 
 ## Service Operators
 
-The goal of these integrations is enabling issuance of certificates with identitiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organisation that controls the domain. 
+The goal of these integrations is enabling issuance of certificates with identitiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organization that controls the domain. 
 
 ## CSR Attributes
 
-In all integrations, the client may send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR reques. For example, servers could use this mechanism to tell the client what fields to include in the CSR Subject and Subject Alternative Name fields, or servers could use this field to instruct the client to include specific policy OIDs. The exact mechanism by which a server decides what attributes and attribute values to specify in the CSR Attributes response is out of scope of this document.
+[TODO] fixup.
+
+In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request. Servers MUST use this mechanism to tell the client what fields to include in either the CSR Subject or Subject Alternative Name fields. Servers MAY use this field to instruct the client to include specific policy OIDs. The exact mechanism by which a server decides what attributes and attribute values to specify in the CSR Attributes response is out of scope of this document.
 
 ## Certification Encoding
 
-When the EST or TEAP server downloads an issued certificate from the ACME server, it MAY include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555} section 7.4.2. This would avoid the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge. This behaviour is implementation specific and outside the scope of this document.
+[TODO] Bring to mailer
+
+When the EST or TEAP server downloads an issued certificate from the ACME server, it SHOULD include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555}} section 7.4.2. This avoids the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge.
 
 [TODO] What level of info do we need on ACME error mapping to TEAP Error TLV or to CMCFailInfo https://datatracker.ietf.org/doc/html/rfc5272#section-6.1.4? 
 
@@ -103,14 +107,14 @@ ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an
 The following mapping from ACME errors to CMC {{RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
 
 ~~~
-+--------------------+-----------------+---------------------------------------------------+
-| ACME               | CMCFailInfo     | TEAP Error Code                                   |
-+--------------------+-----------------+---------------------------------------------------+
-| badCSR             | badRequest      | 1025 Bad Certificate Signing Request              |
-| caa                | badRequest      | 1025 Bad Certificate Signing Request              |
-| rejectedIdentifier | badIdentity     | 1024  Bad Identity In Certificate Signing Request |
-| all other errors   | internalCAError | 1026  Internal CA Error                           |
-+--------------------+-----------------+---------------------------------------------------+
++--------------------+-----------------+--------------------------------------------------+
+| ACME               | CMCFailInfo     | TEAP Error Code                                  |
++--------------------+-----------------+--------------------------------------------------+
+| badCSR             | badRequest      | 1025 Bad Certificate Signing Request             |
+| caa                | badRequest      | 1025 Bad Certificate Signing Request             |
+| rejectedIdentifier | badIdentity     | 1024 Bad Identity In Certificate Signing Request |
+| all other errors   | internalCAError | 1026 Internal CA Error                           |
++--------------------+-----------------+--------------------------------------------------+
 
 ~~~
 
