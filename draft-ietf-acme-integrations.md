@@ -82,7 +82,7 @@ Base Domain Name: The portion of an applied-for FQDN that is the first domain na
 
 The following terms are used in this document:
 
-- BRSKI: Bootstrapping Remote Secure Key Infrastructures {{?I-D.ietf-anima-bootstrapping-keyinfra}}
+- BRSKI: Bootstrapping Remote Secure Key Infrastructures {{?RFC8995}}
 
 - CA: Certificate Authority
 
