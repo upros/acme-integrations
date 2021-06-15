@@ -54,8 +54,8 @@ This document outlines multiple advanced use cases and integrations that ACME fa
 ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
 
 - ACME integration with EST {{?RFC7030}}
-- ACME integration with BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}}
-- ACME integration with BRSKI Default Cloud Registrar {{?I-D.friel-anima-brski-cloud}}
+- ACME integration with BRSKI {{?RFC8995}}
+- ACME integration with BRSKI Default Cloud Registrar {{?I-D.ietf-anima-brski-cloud}}
 - ACME integration with TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
 
 The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
@@ -121,7 +121,7 @@ When the EST or TEAP server downloads an issued certificate from the ACME server
 
 ## id-kp-cmcRA
 
-Note that BRSKI mandates that the id-kp-cmcRA extended key usage bit is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage bit set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a different CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA bit set.
+BRSKI {{?RFC8995}} mandates that the id-kp-cmcRA extended key usage bit is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage bit set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a different CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA bit set.
 
 ## Error Handling
 
@@ -251,7 +251,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
 
 # ACME Integration with BRSKI
 
-BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}} is based upon EST {{?RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
+BRSKI {{?RFC8995}} is based upon EST {{?RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
 
 The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
@@ -338,9 +338,9 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 
 # ACME Integration with BRSKI Default Cloud Registrar
 
-BRSKI Cloud Registrar {{?I-D.friel-anima-brski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
+BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
 
-BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.friel-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
 Similar to the sectiosn above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
@@ -586,8 +586,8 @@ This draft is informational and makes no changes to the referenced specification
 All security considerations from these referenced documents are applicable here:
 
 - EST {{?RFC7030}}
-- BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}}
-- BRSKI Default Cloud Registrar {{?I-D.friel-anima-brski-cloud}}
+- BRSKI {{?RFC8995}}
+- BRSKI Default Cloud Registrar {{?I-D.ietf-anima-brski-cloud}}
 - TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
