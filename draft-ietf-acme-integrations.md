@@ -142,14 +142,14 @@ ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an
 The following mapping from ACME errors to CMC {{?RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
 
 ~~~
-+--------------------+-----------------+--------------------------------------------------+
-| ACME               | CMCFailInfo     | TEAP Error Code                                  |
-+--------------------+-----------------+--------------------------------------------------+
-| badCSR             | badRequest      | 1025 Bad Certificate Signing Request             |
-| caa                | badRequest      | 1025 Bad Certificate Signing Request             |
-| rejectedIdentifier | badIdentity     | 1024 Bad Identity In Certificate Signing Request |
-| all other errors   | internalCAError | 1026 Internal CA Error                           |
-+--------------------+-----------------+--------------------------------------------------+
++--------------------+-----------------+--------------------------+
+| ACME               | CMCFailInfo     | TEAP Error Code          |
++--------------------+-----------------+--------------------------+
+| badCSR             | badRequest      | 1025 Bad CSR             |
+| caa                | badRequest      | 1025 Bad CSR             |
+| rejectedIdentifier | badIdentity     | 1024 Bad Identity In CSR |
+| all other errors   | internalCAError | 1026 Internal CA Error   |
++--------------------+-----------------+--------------------------+
 
 ~~~
 
