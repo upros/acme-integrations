@@ -109,15 +109,27 @@ The goal of these integrations is enabling issuance of certificates with identit
 
 In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{RFC?8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{RFC?6125}}. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR IDevID [IDevID]. 
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{RFC?8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{RFC?6125}}. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
-Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{RFC?7030}} section 1.6 for further details.
+Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{RFC?7030}} section 2.6 for further details.
 
-## Certification Encoding
+## Certificate Chains and Trust Anchors
 
-[TODO] Bring to mailer
+ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate MAY be ommitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
-When the EST or TEAP server downloads an issued certificate from the ACME server, it SHOULD include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555}} section 7.4.2. This avoids the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge.
+EST or TEAP servers must discard client certificates returned by an ACME server that are not chained back to a trust anchor known to the server.
+
+### EST /cacerts
+
+EST {{?RFC7030}} section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{?RFC7030}} section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
+
+Therefore, the EST server MUST return only the ACME end entity certificate in the /simpleenroll response. The EST server MUST return the remainder of the chain returned by the ACME server to the EST server in the /cacerts response to the client, appending the trust anchor root CA if necessary.
+
+### TEAP PKCS#7 TLV
+
+TEAP {{?RFC7170}} section 4.2.16 allows for download of a PKCS#7 certificate chain in response to a TEAP PKCS#10 TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
+
+The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in the {id-kp-cmcRA}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor. 
 
 ## id-kp-cmcRA
 
