@@ -354,13 +354,13 @@ BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behaviour of
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-Similar to the sectiosn above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
+Similar to the sectioms above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
 ~~~
-+--------+             +--------+            +------+     +----------+
-| Pledge |             | EST RA |            | ACME |     | Cloud RA |
-+--------+             +--------+            +------+     |  / MASA  |
-    |                                                     +----------+
++--------+             +--------+            +------+    +----------+
+| Pledge |             | EST RA |            | ACME |    | Cloud RA |
++--------+             +--------+            +------+    |  / MASA  |
+    |                                                    +----------+
     |                                                         |
          NOTE: Pre-Authorization of "example.com" is complete
     |                                                         |
@@ -441,9 +441,9 @@ The example illustrates the TEAP server sending a Request-Action TLV including a
 Althought not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
 
 ~~~
-+------+                +-------------+           +------+     +-----+
-| Peer |                | TEAP-Server |           | ACME |     | DNS |
-+------+                +-------------+           +------+     +-----+
++------+                +-------------+           +------+    +-----+
+| Peer |                | TEAP-Server |           | ACME |    | DNS |
++------+                +-------------+           +------+    +-----+
     |                         |                      |           |
                STEP 1: Pre-Authorization of parent domain
     |                         |                      |           |
