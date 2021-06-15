@@ -29,6 +29,12 @@ author:
     name: Michael Richardson
     org: Sandelman Software Works
     email: mcr+ietf@sandelman.ca
+informative:
+  CAB:
+    author:
+      org: CA/Browser Forum
+    title: Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates
+    target: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.1.pdf
 
 --- abstract
 
@@ -60,6 +66,15 @@ ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used
    14 {{?RFC2119}} {{?RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
+The following terms are defined in the CA/Browser Forum Baseline Requirements [CAB] and are reproduced here:
+
+Base Domain Name: The portion of an applied-for FQDN that is the first domain name node left of a registry-controlled or public suffix plus the registry-controlled or public suffix (e.g. “example.co.uk” or “example.com”). For FQDNs where the right-most domain name node is a gTLD having ICANN Specification 13 in its registry agreement, the gTLD itself may be used as the Base Domain Name.
+
+- ADN: Authorization Domain Name. The Domain Name used to obtain authorization for certificate issuance for a given FQDN.
+
+- Domain Name: The label assigned to a node in the Domain Name System
+
+- Domain Namespace: The set of all possible Domain Names that are subordinate to a single node in the Domain Name System
 
 The following terms are used in this document:
 
@@ -88,9 +103,11 @@ The goal of these integrations is enabling issuance of certificates with identit
 
 ## CSR Attributes
 
-[TODO] fixup.
+In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request.
 
-In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request. Servers MUST use this mechanism to tell the client what fields to include in either the CSR Subject or Subject Alternative Name fields. Servers MAY use this field to instruct the client to include specific policy OIDs. The exact mechanism by which a server decides what attributes and attribute values to specify in the CSR Attributes response is out of scope of this document.
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{RFC?8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{RFC?6125}}.
+
+Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{RFC?7030}} section 1.6 for further details.
 
 ## Certification Encoding
 
@@ -98,7 +115,9 @@ In all integrations, the client MUST send a CSR Attributes request to the EST or
 
 When the EST or TEAP server downloads an issued certificate from the ACME server, it SHOULD include an Accept header of "application/pkcs7-mime" as outlined in {{?RFC8555}} section 7.4.2. This avoids the EST or TEAP server having to convert the certificate into PKCS#7 format before returning it to the Pledge.
 
-[TODO] What level of info do we need on ACME error mapping to TEAP Error TLV or to CMCFailInfo https://datatracker.ietf.org/doc/html/rfc5272#section-6.1.4? 
+## id-kp-cmcRA
+
+Note that BRSKI mandates that the id-kp-cmcRA extended key usage bit is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage bit set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a different CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA bit set.
 
 ## Error Handling
 
@@ -229,8 +248,6 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
 # ACME Integration with BRSKI
 
 BRSKI {{?I-D.ietf-anima-bootstrapping-keyinfra}} is based upon EST {{?RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
-
-Note that BRSKI mandates that the id-kp-cmcRA extended key usage bit is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage bit set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA bit set.
 
 The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
