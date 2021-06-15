@@ -35,7 +35,11 @@ informative:
       org: CA/Browser Forum
     title: Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates
     target: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.1.pdf
-
+  IDevID:
+    author:
+      org: IEEE
+    title: "IEEE Standard for Local and metropolitan area networks - Secure Device Identity"
+    target: https://1.ieee802.org/security/802-1ar
 --- abstract
 
 
@@ -105,7 +109,7 @@ The goal of these integrations is enabling issuance of certificates with identit
 
 In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{RFC?8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{RFC?6125}}.
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{RFC?8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{RFC?6125}}. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR IDevID [IDevID]. 
 
 Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{RFC?7030}} section 1.6 for further details.
 
