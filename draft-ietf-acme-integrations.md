@@ -117,8 +117,6 @@ Servers MAY use this field to instruct the client to include other attributes su
 
 ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate MAY be ommitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
-EST or TEAP servers must discard client certificates returned by an ACME server that are not chained back to a trust anchor known to the server.
-
 ### EST /cacerts
 
 EST {{?RFC7030}} section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{?RFC7030}} section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
