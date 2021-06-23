@@ -543,7 +543,7 @@ The goal of these integrations is enabling issuance of certificates with identit
 
 In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however use of Subject Alternative name field is RECOMMENDED as per {{?RFC6125}}. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
 Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{?RFC7030}} section 2.6 for further details.
 
