@@ -72,27 +72,27 @@ ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used
 
 The following terms are defined in the CA/Browser Forum Baseline Requirements [CAB] and are reproduced here:
 
-Base Domain Name: The portion of an applied-for FQDN that is the first domain name node left of a registry-controlled or public suffix plus the registry-controlled or public suffix (e.g. “example.co.uk” or “example.com”). For FQDNs where the right-most domain name node is a gTLD having ICANN Specification 13 in its registry agreement, the gTLD itself may be used as the Base Domain Name.
+- Authorization Domain Name (ADN): The Domain Name used to obtain authorization for certificate issuance for a given FQDN. The CA may use the FQDN returned from a DNS CNAME lookup as the FQDN for the purposes of domain validation. If the FQDN contains a wildcard character, then the CA MUST remove all wildcard labels from the left most portion of requested FQDN. The CA may prune zero or more labels from left to right until encountering a Base Domain Name and may use any one of the intermediate values for the purpose of domain validation
 
-- ADN: Authorization Domain Name. The Domain Name used to obtain authorization for certificate issuance for a given FQDN.
+- Base Domain Name: The portion of an applied-for FQDN that is the first domain name node left of a registry-controlled or public suffix plus the registry-controlled or public suffix (e.g. “example.co.uk” or “example.com”). For FQDNs where the right-most domain name node is a gTLD having ICANN Specification 13 in its registry agreement, the gTLD itself may be used as the Base Domain Name.
+
+- Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
 
 - Domain Name: The label assigned to a node in the Domain Name System
 
 - Domain Namespace: The set of all possible Domain Names that are subordinate to a single node in the Domain Name System
 
+- Fully‐Qualified Domain Name (FQDN): A Domain Name that includes the labels of all superior nodes in the Internet Domain Name System.
+
 The following terms are used in this document:
 
 - BRSKI: Bootstrapping Remote Secure Key Infrastructures {{?RFC8995}}
-
-- CA: Certificate Authority
 
 - CMC: Certificate Management over CMS
 
 - CSR: Certificate Signing Request
 
 - EST: Enrollment over Secure Transport {{?RFC7030}}
-
-- FQDN: Fully Qualified Domain Name
 
 - RA: PKI Registration Authority
 
