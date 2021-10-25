@@ -114,13 +114,13 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
-The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. 
+The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in section {csr-attributes}.
 
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
 
 ~~~
 +--------+             +--------+             +------+     +-----+
-| Pledge |             | EST RA |             | ACME |     | DNS |
+| Client |             | EST RA |             | ACME |     | DNS |
 +--------+             +--------+             +------+     +-----+
     |                      |                      |           |
                STEP 1: Pre-Authorization of parent domain
@@ -147,7 +147,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      | "example.com"        |           |
     |                      |--------------------------------->|
     |                      |                      |           |
-               STEP 2: Pledge enrolls against RA
+               STEP 2: Client enrolls against RA
     |                      |                      |           |
     | GET /csrattrs        |                      |           |
     |--------------------->|                      |           |
@@ -155,12 +155,12 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     | 200 OK               |                      |           |
     | SEQUENCE {AttrOrOID} |                      |           |
     | SAN OID:             |                      |           |
-    | "pledge.example.com" |                      |           |
+    | "client.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledge.example.com" |                      |           |
+    | "client.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 202 Retry-After      |                      |           |
@@ -169,7 +169,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
                STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
-    |                      | "pledge.example.com" |           |
+    |                      | "client.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 201 status=ready     |           |
@@ -177,7 +177,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      |                      |           |
     |                      | POST /finalize       |           |
     |                      | PKCS#10 CSR          |           |
-    |                      | "pledge.example.com" |           |
+    |                      | "client.example.com" |           |
     |                      |--------------------->|           |
     |                      |                      |           |
     |                      | 200 OK status=valid  |           |
@@ -188,19 +188,19 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
     |                      |                      |           |
     |                      | 200 OK               |           |
     |                      | PKCS#7               |           |
-    |                      | "pledge.example.com" |           |
+    |                      | "client.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
-               STEP 4: Pledge retries enroll
+               STEP 4: Client retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
-    | "pledge.example.com" |                      |           |
+    | "client.example.com" |                      |           |
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "pledge.example.com" |                      |           | 
+    | "client.example.com" |                      |           | 
     |<---------------------|                      |           |
 ~~~
 
@@ -212,7 +212,7 @@ BRSKI {{?RFC8995}} is based upon EST {{?RFC7030}} and defines how to autonomical
 
 The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
-Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API.
+Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API. Refer to section {csr-attributes} for more details.
 
 The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some timme to complete.
 
@@ -299,7 +299,7 @@ BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behaviour of
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-Similar to the sectioms above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
+Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
 ~~~
 +--------+             +--------+            +------+    +----------+
@@ -381,7 +381,7 @@ TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV. For example, the TEAP server could instruct the peer what Subject or SAN entries to include in its CSR.
+The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV.
 
 Althought not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
 
@@ -492,10 +492,10 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
     |   {PKCS#10 TLV:         |                      |           |
-    |   "pledge.example.com"} |                      |           |
+    |   "client.example.com"} |                      |           |
     |------------------------>|                      |           |
     |                         | POST /newOrder       |           |
-    |                         | "pledge.example.com" |           |
+    |                         | "client.example.com" |           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 201 status=ready     |           |
@@ -503,7 +503,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |                      |           |
     |                         | POST /finalize       |           |
     |                         | PKCS#10 CSR          |           |
-    |                         | "pledge.example.com" |           |
+    |                         | "client.example.com" |           |
     |                         |--------------------->|           |
     |                         |                      |           |
     |                         | 200 OK status=valid  |           |
@@ -514,7 +514,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
     |                         |                      |           |
     |                         | 200 OK               |           |
     |                         | PKCS#7               |           |
-    |                         | "pledge.example.com" |           |
+    |                         | "client.example.com" |           |
     |                         |<---------------------|           |
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
@@ -541,7 +541,9 @@ The goal of these integrations is enabling issuance of certificates with identit
 
 ## CSR Attributes
 
-In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes it expects the client to include in the subsequent CSR request.
+In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes, and what attribute values, it expects the client to include in the subsequent CSR request. For example, the server could instruct the peer what Subject Alternative Name entries to include in its CSR.
+
+EST {{?RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{?I-D.richardson-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
 Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
