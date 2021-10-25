@@ -70,23 +70,39 @@ ACME for subdomains {{?I-D.friel-acme-subdomains}} outlines how ACME can be used
    14 {{?RFC2119}} {{?RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
-The following terms are defined in the CA/Browser Forum Baseline Requirements [CAB] and are reproduced here:
+The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduced here:
 
-- Authorization Domain Name (ADN): The Domain Name used to obtain authorization for certificate issuance for a given FQDN. The CA may use the FQDN returned from a DNS CNAME lookup as the FQDN for the purposes of domain validation. If the FQDN contains a wildcard character, then the CA MUST remove all wildcard labels from the left most portion of requested FQDN. The CA may prune zero or more labels from left to right until encountering a Base Domain Name and may use any one of the intermediate values for the purpose of domain validation
+- Label: An ordered list of zero or more octets that makes up a
+      portion of a domain name.  Using graph theory, a label identifies
+      one node in a portion of the graph of all possible domain names.
 
-- Base Domain Name: The portion of an applied-for FQDN that is the first domain name node left of a registry-controlled or public suffix plus the registry-controlled or public suffix (e.g. “example.co.uk” or “example.com”). For FQDNs where the right-most domain name node is a gTLD having ICANN Specification 13 in its registry agreement, the gTLD itself may be used as the Base Domain Name.
+- Domain Name: An ordered list of one or more labels.
 
-- Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
+- Subdomain: "A domain is a subdomain of another domain if it is
+      contained within that domain.  This relationship can be tested by
+      seeing if the subdomain's name ends with the containing domain's
+      name."  (Quoted from {{?RFC1034}}, Section 3.1) For example, in the
+      host name "nnn.mmm.example.com", both "mmm.example.com" and
+      "nnn.mmm.example.com" are subdomains of "example.com".  Note that
+      the comparisons here are done on whole labels; that is,
+      "ooo.example.com" is not a subdomain of "oo.example.com".
 
-- Domain Name: The label assigned to a node in the Domain Name System
-
-- Domain Namespace: The set of all possible Domain Names that are subordinate to a single node in the Domain Name System
-
-- Fully‐Qualified Domain Name (FQDN): A Domain Name that includes the labels of all superior nodes in the Internet Domain Name System.
+- Fully-Qualified Domain Name (FQDN):  This is often just a clear way
+      of saying the same thing as "domain name of a node", as outlined
+      above.  However, the term is ambiguous.  Strictly speaking, a
+      fully-qualified domain name would include every label, including
+      the zero-length label of the root: such a name would be written
+      "www.example.net." (note the terminating dot).  But, because every
+      name eventually shares the common root, names are often written
+      relative to the root (such as "www.example.net") and are still
+      called "fully qualified".  This term first appeared in {{?RFC0819}}.
+      In this document, names are often written relative to the root.
 
 The following terms are used in this document:
 
 - BRSKI: Bootstrapping Remote Secure Key Infrastructures {{?RFC8995}}
+
+- Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
 
 - CMC: Certificate Management over CMS
 
