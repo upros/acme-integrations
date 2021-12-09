@@ -112,6 +112,8 @@ The following terms are used in this document:
 
 - EST: Enrollment over Secure Transport {{?RFC7030}}
 
+- MASA: Manufacturer Authorized Signing Authority as defined in {{?RFC8995}}
+
 - RA: PKI Registration Authority
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
