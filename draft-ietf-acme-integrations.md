@@ -395,7 +395,7 @@ Similar to the sections above, the client calls EST /csrattrs API before calling
 
 # ACME Integration with TEAP
 
-TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} defines extensions to TEAP that includes additional TLVs for certificate enrollment and BRSKI handling inside the TEAP tunnel. Neither TEAP {{?RFC7170}} or TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} define how the TEAP server communicates with the CA.
+TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} defines extensions to TEAP that includes additional Type-Length-Value (TLV) elements for certificate enrollment and BRSKI handling inside the TEAP tunnel. Neither TEAP {{?RFC7170}} or TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} define how the TEAP server communicates with the CA.
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{?I-D.friel-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
