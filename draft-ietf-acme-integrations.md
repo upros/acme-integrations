@@ -114,6 +114,8 @@ The following terms are used in this document:
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
 
+- TLV: Type-Length-Value format defined in TEAP
+
 # ACME Integration with EST
 
 EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending CMC messages over HTTP. EST section 1 states:
