@@ -104,7 +104,9 @@ The following terms are used in this document:
 
 - Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
 
-- CMC: Certificate Management over CMS
+- CMS: Cryptographic Message Syntax {{?RFC5652}}
+
+- CMC: Certificate Management over CMS {{?RFC5272}}
 
 - CSR: Certificate Signing Request
 
