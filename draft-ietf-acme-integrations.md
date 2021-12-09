@@ -141,9 +141,10 @@ The call flow illustrates the client calling the EST /csrattrs API before callin
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
 
 ~~~
-+--------+             +--------+             +------+     +-----+
-| Client |             | EST RA |             | ACME |     | DNS |
-+--------+             +--------+             +------+     +-----+
++--------+             +--------+            +--------+    +-----+
+| Client |             | EST RA |            |  ACME  |    | DNS |
++--------+             +--------+            | Server |    +-----+
+    |                      |                 +--------+       |
     |                      |                      |           |
                STEP 1: Pre-Authorization of parent domain
     |                      |                      |           |
@@ -239,9 +240,10 @@ Similar to the EST section above, the client calls EST /csrattrs API before call
 The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some timme to complete.
 
 ~~~
-+--------+             +--------+             +------+     +------+
-| Pledge |             | EST RA |             | ACME |     | MASA |
-+--------+             +--------+             +------+     +------+
++--------+             +--------+            +--------+     +------+
+| Pledge |             | EST RA |            |  ACME  |     | MASA |
++--------+             +--------+            | Server |     +------+
+    |                      |                 +--------+       |
     |                      |                      |           |
                NOTE: Pre-Authorization of "example.com" is complete
     |                      |                      |           |
@@ -324,10 +326,10 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
 ~~~
-+--------+             +--------+            +------+    +----------+
-| Pledge |             | EST RA |            | ACME |    | Cloud RA |
-+--------+             +--------+            +------+    |  / MASA  |
-    |                                                    +----------+
++--------+             +--------+           +--------+   +----------+
+| Pledge |             | EST RA |           |  ACME  |   | Cloud RA |
++--------+             +--------+           | Server |   |  / MASA  |
+    |                                       +--------+   +----------+
     |                                                         |
          NOTE: Pre-Authorization of "example.com" is complete
     |                                                         |
@@ -408,9 +410,10 @@ The example illustrates the TEAP server sending a Request-Action TLV including a
 Althought not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
 
 ~~~
-+------+                +-------------+           +------+    +-----+
-| Peer |                | TEAP-Server |           | ACME |    | DNS |
-+------+                +-------------+           +------+    +-----+
++------+                +-------------+          +--------+   +-----+
+| Peer |                | TEAP-Server |          |  ACME  |   | DNS |
++------+                +-------------+          | Server |   +-----+
+    |                         |                  +--------|      |
     |                         |                      |           |
                STEP 1: Pre-Authorization of parent domain
     |                         |                      |           |
