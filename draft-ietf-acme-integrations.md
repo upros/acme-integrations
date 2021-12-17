@@ -237,7 +237,7 @@ The following call flow shows how ACME may be integrated into a full BRSKI vouch
 
 Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API. Refer to section {csr-attributes} for more details.
 
-The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some timme to complete.
+The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some time to complete.
 
 ~~~
 +--------+             +--------+            +--------+     +------+
@@ -405,7 +405,7 @@ This section outlines how ACME could be used for communication between the TEAP 
 
 The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV.
 
-Althought not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
+Although not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
 
 ~~~
 +------+                +-------------+          +--------+   +-----+
@@ -560,7 +560,7 @@ Althought not explicitly illustrated in this call flow, the Peer and TEAP Server
 
 ## Service Operators
 
-The goal of these integrations is enabling issuance of certificates with identitiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organization that controls the domain. 
+The goal of these integrations is enabling issuance of certificates with identifiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organization that controls the domain. 
 
 ## CSR Attributes
 
@@ -574,7 +574,7 @@ Servers MAY use this field to instruct the client to include other attributes su
 
 ## Certificate Chains and Trust Anchors
 
-ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate MAY be ommitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
+ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate MAY be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
 ### EST /cacerts
 
@@ -635,7 +635,7 @@ It is expected that the integration mechanisms proposed here will primarily use 
    query to a remote server of the attacker's choosing.
 
 It is expected that the TEAP-EAP server/EST Registrar will perform DNS dynamic updates
-to a DNS primary server using {{?RFC3007}} Dynamic updates, secured with with either SIG(0), or TSIG keys.
+to a DNS primary server using {{?RFC3007}} Dynamic updates, secured with either SIG(0), or TSIG keys.
 
 A major source of vulnerability is the disclosure of these DNS key records.
 An attacker that has access to them, can provision their own certificates into the
@@ -652,17 +652,17 @@ When performing challenge fulfilment via writing files to HTTP webservers, write
 
 ## Denial of Service against ACME infrastructure
 
-The intermdiate node (the TEAP-EAP server, or the EST Registrar) should cache the resulting certificates such that if the communication with the pledge is lost, subsequent attempts
+The intermediate node (the TEAP-EAP server, or the EST Registrar) should cache the resulting certificates such that if the communication with the pledge is lost, subsequent attempts
 to enroll will result in the cache certificate being returned.
 
 As many ACME servers have per-day, per-IP and per-subjectAltName limits, it is prudent not to request identical certificates too often.
-This could be due to operator or installer error, with multiple configuration resets occuring within a short period of time.
+This could be due to operator or installer error, with multiple configuration resets occurring within a short period of time.
 
 The cache should be indexed by the complete contents of the Certificate Signing Request,
 and should not persist beyond the notAfter date in the certificate.
 
 This means that if the private/public keypair changes on the pledge, then a new certificate will be issued.
-If the the requested SubjectAltName changes, then a new certificate will be requested.
+If the requested SubjectAltName changes, then a new certificate will be requested.
 
 In a case where a device is simply factory reset, and enrolls again, then the same certificate can be returned.
 
