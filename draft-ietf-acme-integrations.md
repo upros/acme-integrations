@@ -51,7 +51,7 @@ This document outlines multiple advanced use cases and integrations that ACME fa
 
 # Introduction
 
-ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
+ACME {{?RFC8555}} defines a protocol that a certification authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
 
 - ACME integration with EST {{?RFC7030}}
 - ACME integration with BRSKI {{?RFC8995}}
@@ -60,7 +60,7 @@ ACME {{?RFC8555}} defines a protocol that a certificate authority (CA) and an ap
 
 The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
 
-ACME for subdomains {{?I-D.ietf-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from a certificate authority where the client has fulfilled a challenge against a parent domain, but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimization when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
+ACME for subdomains {{?I-D.ietf-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from an ACME server where the client has fulfilled a challenge against a parent domain, but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimization when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
 
 # Terminology
 
@@ -134,7 +134,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
-This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
+This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. The example also illustrates using the ACME DNS challenge type, but this integration is not limited to DNS challenges.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -265,8 +265,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
-    | SEQUENCE {AttrOrOID} |                      |           |
-    | SAN OID:             |                      |           |
+    | SAN:                 |                      |           |
     | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
@@ -347,8 +346,7 @@ Similar to the sections above, the client calls EST /csrattrs API before calling
     |--------------------->|                      |           |
     |                      |                      |           |
     | 200 OK               |                      |           |
-    | SEQUENCE {AttrOrOID} |                      |           |
-    | SAN OID:             |                      |           |
+    | SAN:                 |                      |           |
     | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
@@ -570,7 +568,7 @@ In all integrations, the client MUST send a CSR Attributes request to the EST or
 
 EST {{?RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{?I-D.richardson-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier must be a Domain Name in a Domain Namespace that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier must be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
 Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{?RFC7030}} section 2.6 for further details.
 
@@ -628,7 +626,7 @@ All security considerations from these referenced documents are applicable here:
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
-The integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{RFC8555}} section 8.4.  The security considerations in RFC8555 says:
+It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{RFC8555}} section 8.4.  The security considerations in RFC8555 says:
 
    The DNS is a common point of vulnerability for all of these
    challenges.  An entity that can provision false DNS records for a
