@@ -30,11 +30,6 @@ author:
     org: Sandelman Software Works
     email: mcr+ietf@sandelman.ca
 informative:
-  CAB:
-    author:
-      org: CA/Browser Forum
-    title: Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates
-    target: https://cabforum.org/wp-content/uploads/CA-Browser-Forum-BR-1.7.1.pdf
   IDevID:
     author:
       org: IEEE
@@ -318,7 +313,7 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 
 # ACME Integration with BRSKI Default Cloud Registrar
 
-BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behaviour of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
+BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behavior of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
@@ -646,7 +641,7 @@ When used to provision, for instance, a (SIP) phone system this would permit an 
 Not only does this allow for redirection of phone calls, but possibly also toll fraud.
 
 Operators should consider restricting the integration server such that it can only update the DNS records for a specific zone or zones where ACME is required for client certificate enrollment automation.
-For example, if all IoT devices in an organisation enroll using EST against an EST RA, and all IoT devices will be issued certificates in a subdomain under iot.example.com, then the integration server could be issued a credential that only allows updating of DNS records in a zone that includes domains in the iot.example.com namespace, but does not allow updating of DNS records under any other example.com DNS namespace.
+For example, if all IoT devices in an organization enroll using EST against an EST RA, and all IoT devices will be issued certificates in a subdomain under iot.example.com, then the integration server could be issued a credential that only allows updating of DNS records in a zone that includes domains in the iot.example.com namespace, but does not allow updating of DNS records under any other example.com DNS namespace.
 
 When performing challenge fulfilment via writing files to HTTP webservers, write access should only be granted to a specific set of servers, and only to a specific set of directories for storage of challenge files.
 
