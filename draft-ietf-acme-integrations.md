@@ -1,5 +1,6 @@
 ---
 
+ipr: trust200902
 title: "ACME Integrations"
 abbrev: ACME-INTEGRATIONS
 docname: draft-ietf-acme-integrations-latest
