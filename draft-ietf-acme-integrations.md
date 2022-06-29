@@ -47,7 +47,7 @@ This document outlines multiple advanced use cases and integrations that ACME fa
 
 # Introduction
 
-ACME {{?RFC8555}} defines a protocol that a certification authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
+ACME {{?RFC8555}} defines a protocol that a certification authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) {{?RFC5280}} certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
 
 - ACME integration with EST {{?RFC7030}}
 - ACME integration with BRSKI {{?RFC8995}}
