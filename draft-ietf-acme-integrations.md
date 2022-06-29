@@ -110,7 +110,7 @@ The following terms are used in this document:
 
 - MASA: Manufacturer Authorized Signing Authority as defined in {{?RFC8995}}
 
-- RA: PKI Registration Authority
+- RA: PKI Registration Authority {{?RFC2986}}
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
 
