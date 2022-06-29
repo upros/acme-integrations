@@ -110,6 +110,12 @@ The following terms are used in this document:
 
 - MASA: Manufacturer Authorized Signing Authority as defined in {{?RFC8995}}
 
+- PKCS: Public-Key Cryptography Standards {{?RFC3447}}
+- 
+- PKCS#7: PKCS Cryptographic Message Syntax {{?RFC2315}}
+
+- PKCS#10: PKCS Certification Request  Syntax {{?RFC2986}}
+
 - RA: PKI Registration Authority {{?RFC2986}}
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
@@ -580,7 +586,7 @@ Therefore, the EST server MUST return only the ACME end entity certificate in th
 
 ### TEAP PKCS#7 TLV
 
-TEAP {{?RFC7170}} section 4.2.16 allows for download of a PKCS#7 certificate chain in response to a TEAP PKCS#10 TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
+TEAP {{?RFC7170}} section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
 
 The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in {{id-kp-cmcra}}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor. 
 
