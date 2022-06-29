@@ -56,7 +56,7 @@ ACME {{?RFC8555}} defines a protocol that a certification authority (CA) and an 
 
 The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
 
-ACME for subdomains {{?I-D.ietf-acme-subdomains}} outlines how ACME can be used by a client to obtain a certificate for a subdomain identifier from an ACME server where the client has fulfilled a challenge against a parent domain, but does not need to fulfil a challenge against the explicit subdomain. This is a useful optimization when ACME is used to issue certificates for large numbers of devices as it reduces the domain ownership proof traffic (DNS or HTTP) and ACME traffic overhead, but is not a necessary requirement.
+Optionally, ACME for subdomains {{?I-D.ietf-acme-subdomains}} offers a useful optimization when ACME is used to issue certificates for large numbers of devices; it reduces the domain ownership proof traffic as well as the ACME traffic overhead. This is accomplished by completing a challenge against the parent domain instead of a challenge against each explicit subdomain. Use of ACME for subdomains is not a necessary requirement.
 
 # Terminology
 
