@@ -570,7 +570,7 @@ Servers MAY use this field to instruct the client to include other attributes su
 
 ## Certificate Chains and Trust Anchors
 
-ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate MAY be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
+ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate SHOULD be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
 ### EST /cacerts
 
