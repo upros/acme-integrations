@@ -104,7 +104,7 @@ The following terms are used in this document:
 
 - CMC: Certificate Management over CMS {{?RFC5272}}
 
-- CSR: Certificate Signing Request
+- CSR: Certificate Signing Request {{?RFC2986}}
 
 - EST: Enrollment over Secure Transport {{?RFC7030}}
 
