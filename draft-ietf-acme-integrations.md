@@ -114,7 +114,7 @@ The following terms are used in this document:
 
 - TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
 
-- TLV: Type-Length-Value format defined in TEAP
+- TLV: Type-Length-Value format defined in TEAP {{?RFC7170}}
 
 # ACME Integration with EST
 
