@@ -598,9 +598,13 @@ BRSKI {{?RFC8995}} mandates that the id-kp-cmcRA extended key usage OID is set i
 
 ## Error Handling
 
-ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC response, or may return a human readable error in the response body.
+ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC {{?RFC5272}} response, or may return a human readable error in the response body.
 
-The following mapping from ACME errors to CMC {{?RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
+If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA SHOULD respond with a suitable 4xx HTTP {{?RFC2616}} error code, and SHOULD NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{?RFC5272}} error code of badItentity.
+
+If a client sends a certificate enrollment request to a TEAP server for an identifier that the TEAP server does not control, the TEAP server SHOULD respond with an Error TLV with error code 1024 Bad Identity In Certificate Signing Request, and SHOULD NOT send an enrollment request to the ACME server.
+
+If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{?RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
 
 ~~~
 +--------------------+-----------------+--------------------------+
