@@ -110,7 +110,7 @@ The following terms are used in this document:
 
 - MASA: Manufacturer Authorized Signing Authority as defined in {{?RFC8995}}
 
-- PKCS: Public-Key Cryptography Standards {{?RFC3447}}
+- PKCS: Public-Key Cryptography Standards {{?RFC8017}}
 - 
 - PKCS#7: PKCS Cryptographic Message Syntax {{?RFC2315}}
 
@@ -570,7 +570,7 @@ If the client sends a certificate enrollment request for an identifier in a doma
 
 In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes, and what attribute values, it expects the client to include in the subsequent CSR request. For example, the server could instruct the peer what Subject Alternative Name entries to include in its CSR.
 
-EST {{?RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{?I-D.richardson-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
+EST {{?RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{?I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
 Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
@@ -600,7 +600,7 @@ BRSKI {{?RFC8995}} mandates that the id-kp-cmcRA extended key usage OID is set i
 
 ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC {{?RFC5272}} response, or may return a human readable error in the response body.
 
-If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA SHOULD respond with a suitable 4xx HTTP {{?RFC2616}} error code, and SHOULD NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{?RFC5272}} error code of badIdentity.
+If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA SHOULD respond with a suitable 4xx HTTP {{?RFC7231}} error code, and SHOULD NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{?RFC5272}} error code of badIdentity.
 
 If a client sends a certificate enrollment request to a TEAP server for an identifier that the TEAP server does not control, the TEAP server SHOULD respond with an Error TLV with error code 1024 Bad Identity In Certificate Signing Request, and SHOULD NOT send an enrollment request to the ACME server.
 
