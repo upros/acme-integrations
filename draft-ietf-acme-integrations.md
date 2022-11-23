@@ -564,7 +564,7 @@ Although not explicitly illustrated in this call flow, the Peer and TEAP Server 
 
 ## Service Operators
 
-The goal of these integrations is enabling issuance of certificates with identifiers in a given domain by an ACME server to a client. It is expected that the EST RA or TEAP servers that the client sends certificate enrollment requests to are operated by the organization that controls the domains. The ACME server is not necessarily operated by the organization that controls the domain.
+The goal of these integrations is enabling issuance of certificates with identifiers in a given domain by an ACME server to a client. The operator of the EST RA or TEAP server must be able to fulfil ACME challenges that prove domain ownership for issuance of certificates with identifiers in that domain. The ACME server is not necessarily operated by the organization that controls the domain.
 
 If the client sends a certificate enrollment request for an identifier in a domain that the EST RA or TEAP server does not have operational control over, the server SHOULD reject the request with a suitable error immediately, and not send a certificate enrollment request to the ACME server. See {{error-handling}} for more information on error handling.
 
