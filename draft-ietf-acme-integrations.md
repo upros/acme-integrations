@@ -47,23 +47,23 @@ This document outlines multiple advanced use cases and integrations that ACME fa
 
 # Introduction
 
-ACME {{?RFC8555}} defines a protocol that a certification authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) {{?RFC5280}} certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
+ACME {{!RFC8555}} defines a protocol that a certification authority (CA) and an applicant can use to automate the process of domain name ownership validation and X.509 (PKIX) {{?RFC5280}} certificate issuance. The protocol is rich and flexible and enables multiple use cases that are not immediately obvious from reading the specification. This document explicitly outlines multiple advanced ACME use cases including:
 
-- ACME integration with EST {{?RFC7030}}
-- ACME integration with BRSKI {{?RFC8995}}
-- ACME integration with BRSKI Default Cloud Registrar {{?I-D.ietf-anima-brski-cloud}}
-- ACME integration with TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
+- ACME integration with EST {{!RFC7030}}
+- ACME integration with BRSKI {{!RFC8995}}
+- ACME integration with BRSKI Default Cloud Registrar {{!I-D.ietf-anima-brski-cloud}}
+- ACME integration with TEAP {{!RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
 
 The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
 
-Optionally, ACME for subdomains {{?I-D.ietf-acme-subdomains}} offers a useful optimization when ACME is used to issue certificates for large numbers of devices in the same domain; it reduces the domain ownership proof traffic as well as the ACME traffic overhead. This is accomplished by completing a challenge against the parent domain instead of a challenge against each explicit subdomain. Use of ACME for subdomains is not a necessary requirement.
+Optionally, ACME for subdomains {{!I-D.ietf-acme-subdomains}} offers a useful optimization when ACME is used to issue certificates for large numbers of devices in the same domain; it reduces the domain ownership proof traffic as well as the ACME traffic overhead. This is accomplished by completing a challenge against the parent domain instead of a challenge against each explicit subdomain. Use of ACME for subdomains is not a necessary requirement.
 
 # Terminology
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
    "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 {{?RFC2119}} {{?RFC8174}} when, and only when, they appear in all
+   14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
 The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduced here:
@@ -96,7 +96,7 @@ The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduc
 
 The following terms are used in this document:
 
-- BRSKI: Bootstrapping Remote Secure Key Infrastructures {{?RFC8995}}
+- BRSKI: Bootstrapping Remote Secure Key Infrastructures {{!RFC8995}}
 
 - Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
 
@@ -106,9 +106,9 @@ The following terms are used in this document:
 
 - CSR: Certificate Signing Request {{?RFC2986}}
 
-- EST: Enrollment over Secure Transport {{?RFC7030}}
+- EST: Enrollment over Secure Transport {{!RFC7030}}
 
-- MASA: Manufacturer Authorized Signing Authority as defined in {{?RFC8995}}
+- MASA: Manufacturer Authorized Signing Authority as defined in {{!RFC8995}}
 
 - PKCS: Public-Key Cryptography Standards {{?RFC8017}}
 - 
@@ -118,13 +118,13 @@ The following terms are used in this document:
 
 - RA: PKI Registration Authority {{?RFC2986}}
 
-- TEAP: Tunneled Extensible Authentication Protocol {{?RFC7170}}
+- TEAP: Tunneled Extensible Authentication Protocol {{!RFC7170}}
 
-- TLV: Type-Length-Value format defined in TEAP {{?RFC7170}}
+- TLV: Type-Length-Value format defined in TEAP {{!RFC7170}}
 
 # ACME Integration with EST
 
-EST {{?RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST section 1 states:
+EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST section 1 states:
 
 "Architecturally, the EST service is located between a Certification Authority (CA) and a client.  It performs several functions traditionally allocated to the Registration Authority (RA) role in a PKI."
 
@@ -136,7 +136,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
-This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{?I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. The example also illustrates using the ACME DNS challenge type, but this integration is not limited to DNS challenges.
+This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. The example also illustrates using the ACME DNS challenge type, but this integration is not limited to DNS challenges.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -233,7 +233,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
 
 # ACME Integration with BRSKI
 
-BRSKI {{?RFC8995}} is based upon EST {{?RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. The signed vouchers are issued by the Manufacturer Authorized Signing Authority (MASA) service as described in BRSKI.
+BRSKI {{!RFC8995}} is based upon EST {{!RFC7030}} and defines how to autonomically bootstrap PKI trust anchors into devices via means of signed vouchers. The signed vouchers are issued by the Manufacturer Authorized Signing Authority (MASA) service as described in BRSKI.
 
 EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
 
@@ -322,9 +322,9 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 
 # ACME Integration with BRSKI Default Cloud Registrar
 
-BRSKI Cloud Registrar {{?I-D.ietf-anima-brski-cloud}} specifies the behavior of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
+BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of a BRSKI Cloud Registrar, and how a pledge can interact with a BRSKI Cloud Registrar when bootstrapping. Similar to the local domain registrar BRSKI flow, ACME can be easily integrated with a cloud registrar bootstrap flow.
 
-BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{?I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
+BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. In the example illustrated here, the extension to {{?RFC8366}} Vouchers which is defined in {{!I-D.ietf-anima-brski-cloud}}, and allows the specification of a bootstrap EST domain, is leveraged. This extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
@@ -403,9 +403,9 @@ Similar to the sections above, the client calls EST /csrattrs API before calling
 
 # ACME Integration with TEAP
 
-TEAP {{?RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} defines extensions to TEAP that includes additional Type-Length-Value (TLV) elements for certificate enrollment and BRSKI handling inside the TEAP tunnel. Neither TEAP {{?RFC7170}} or TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}} define how the TEAP server communicates with the CA.
+TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}} defines extensions to TEAP that includes additional Type-Length-Value (TLV) elements for certificate enrollment and BRSKI handling inside the TEAP tunnel. Neither TEAP {{!RFC7170}} or TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}} define how the TEAP server communicates with the CA.
 
-This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{?I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
+This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
 The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV.
 
@@ -572,41 +572,41 @@ If the client sends a certificate enrollment request for an identifier in a doma
 
 In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes, and what attribute values, it expects the client to include in the subsequent CSR request. For example, the server could instruct the peer what Subject Alternative Name entries to include in its CSR.
 
-EST {{?RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{?I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
+EST {{!RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{!I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{?RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{?I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{?I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
-Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{?RFC7030}} section 2.6 for further details.
+Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{!RFC7030}} section 2.6 for further details.
 
 ## Certificate Chains and Trust Anchors
 
-ACME {{?RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate SHOULD be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
+ACME {{!RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate SHOULD be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
 ### EST /cacerts
 
-EST {{?RFC7030}} section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{?RFC7030}} section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
+EST {{!RFC7030}} section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{!RFC7030}} section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
 
 Therefore, the EST server MUST return only the ACME end entity certificate in the /simpleenroll response. The EST server MUST return the remainder of the chain returned by the ACME server to the EST server in the /cacerts response to the client, appending the trust anchor root CA if necessary.
 
 ### TEAP PKCS#7 TLV
 
-TEAP {{?RFC7170}} section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
+TEAP {{!RFC7170}} section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
 
 The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in {{id-kp-cmcra}}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor. 
 
 ## id-kp-cmcRA
 
-BRSKI {{?RFC8995}} mandates that the id-kp-cmcRA extended key usage OID is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage OID set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a different CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA OID set.
+BRSKI {{!RFC8995}} mandates that the id-kp-cmcRA extended key usage OID is set in the Registrar (or EST RA) end entity certificate that the Registrar uses when signing voucher request messages sent to the MASA. Public ACME servers may not be willing to issue end entity certificates that have the id-kp-cmcRA extended key usage OID set. In these scenarios, the EST RA may be used by the pledge to get issued certificates by a public ACME server, but the EST RA itself will need an end entity certificate that has been issued by a different CA (e.g. an operator deployed private CA) and that has the id-kp-cmcRA OID set.
 
 ## Error Handling
 
-ACME {{?RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{?RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{?RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC {{?RFC5272}} response, or may return a human readable error in the response body.
+ACME {{!RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{!RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{!RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC {{!RFC5272}} response, or may return a human readable error in the response body.
 
-If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA SHOULD respond with a suitable 4xx HTTP {{?RFC9110}} error code, and SHOULD NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{?RFC5272}} error code of badIdentity.
+If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA SHOULD respond with a suitable 4xx HTTP {{!RFC9110}} error code, and SHOULD NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{!RFC5272}} error code of badIdentity.
 
 If a client sends a certificate enrollment request to a TEAP server for an identifier that the TEAP server does not control, the TEAP server SHOULD respond with an Error TLV with error code 1024 Bad Identity In Certificate Signing Request, and SHOULD NOT send an enrollment request to the ACME server.
 
-If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{?RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{?RFC7170}} section 4.2.6 error codes is RECOMMENDED.
+If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{!RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{!RFC7170}} section 4.2.6 error codes is RECOMMENDED.
 
 ~~~
 +--------------------+-----------------+--------------------------+
@@ -629,14 +629,14 @@ This document does not make any requests to IANA.
 This draft is informational and makes no changes to the referenced specifications.
 All security considerations from these referenced documents are applicable here:
 
-- EST {{?RFC7030}}
-- BRSKI {{?RFC8995}}
-- BRSKI Default Cloud Registrar {{?I-D.ietf-anima-brski-cloud}}
-- TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{?I-D.lear-eap-teap-brski}}
+- EST {{!RFC7030}}
+- BRSKI {{!RFC8995}}
+- BRSKI Default Cloud Registrar {{!I-D.ietf-anima-brski-cloud}}
+- TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
-It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{RFC8555}} section 8.4.  The security considerations in RFC8555 says:
+It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{!RFC8555}} section 8.4.  The security considerations in {{!RFC8555}} says:
 
    The DNS is a common point of vulnerability for all of these
    challenges.  An entity that can provision false DNS records for a
