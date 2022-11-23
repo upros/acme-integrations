@@ -142,6 +142,8 @@ The call flow illustrates the client calling the EST /csrattrs API before callin
 
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
 
+This example illustrates, and all subsequent examples in this document illustrate, the use of the ACME 'dns-01' challenge type. This does not preclude the use of any other ACME challenges, however, examples illustrating the use of other challenge types are not documented here.
+
 ~~~
 +--------+             +--------+            +--------+    +-----+
 | Client |             | EST RA |            |  ACME  |    | DNS |
@@ -243,6 +245,8 @@ Similar to the EST section above, the client calls EST /csrattrs API before call
 
 The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some time to complete.
 
+This example illustrates the use of the ACME 'dns-01' challenge type.
+
 ~~~
 +--------+             +--------+            +--------+     +------+
 | Pledge |             | EST RA |            |  ACME  |     | MASA |
@@ -328,6 +332,8 @@ BRSKI cloud registrar is flexible and allows for multiple different local domain
 
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
+This example illustrates the use of the ACME 'dns-01' challenge type.
+
 ~~~
 +--------+             +--------+           +--------+   +----------+
 | Pledge |             | EST RA |           |  ACME  |   | Cloud RA |
@@ -410,6 +416,8 @@ This section outlines how ACME could be used for communication between the TEAP 
 The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV.
 
 Although not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
+
+This example illustrates the use of the ACME 'dns-01' challenge type.
 
 ~~~
 +------+                +-------------+          +--------+   +-----+
@@ -636,7 +644,7 @@ All security considerations from these referenced documents are applicable here:
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
-It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{!RFC8555}} Section 8.4.  The security considerations in {{!RFC8555}} says:
+It is expected that the integration mechanisms proposed here will primarily use the 'dns-01' challenge documented in {{!RFC8555}} Section 8.4.  The security considerations in {{!RFC8555}} says:
 
    The DNS is a common point of vulnerability for all of these
    challenges.  An entity that can provision false DNS records for a
