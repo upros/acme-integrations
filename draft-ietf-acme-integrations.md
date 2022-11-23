@@ -124,15 +124,15 @@ The following terms are used in this document:
 
 # ACME Integration with EST
 
-EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST section 1 states:
+EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST {{!RFC7030}} Section 1 states:
 
 "Architecturally, the EST service is located between a Certification Authority (CA) and a client.  It performs several functions traditionally allocated to the Registration Authority (RA) role in a PKI."
 
-EST section 1.1 states that:
+EST {{!RFC7030}} Section 1.1 states that:
 
 "For certificate issuing services, the EST CA is reached through the EST server; the CA could be logically "behind" the EST server or embedded within it."
 
-When the CA is logically "behind" the EST RA, EST does not specify how the RA communicates with the CA. EST section 1 states:
+When the CA is logically "behind" the EST RA, EST does not specify how the RA communicates with the CA. EST {{!RFC7030}} Section 1 states:
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
@@ -576,21 +576,21 @@ EST {{!RFC7030}} is not clear on how the CSR Attributes response should be struc
 
 Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
 
-Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{!RFC7030}} section 2.6 for further details.
+Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{!RFC7030}} Section 2.6 for further details.
 
 ## Certificate Chains and Trust Anchors
 
-ACME {{!RFC8555}} section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate SHOULD be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
+ACME {{!RFC8555}} Section 9.1 states that ACME servers may return a certificate chain to an ACME client where an end entity certificate is followed by certificates that certify it. The trust anchor certificate SHOULD be omitted from the chain as it is assumed that the trust anchor is already known by the ACME client i.e. the EST or TEAP server.
 
 ### EST /cacerts
 
-EST {{!RFC7030}} section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{!RFC7030}} section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
+EST {{!RFC7030}} Section 4.2.3 states that the /simpleenroll response contains "only the certificate that was issued". EST {{!RFC7030}} Section 4.1.3 states that the /cacerts response "MUST include any additional certificates the client would need to build a chain from an EST CA-issued certificate to the current EST CA TA".
 
 Therefore, the EST server MUST return only the ACME end entity certificate in the /simpleenroll response. The EST server MUST return the remainder of the chain returned by the ACME server to the EST server in the /cacerts response to the client, appending the trust anchor root CA if necessary.
 
 ### TEAP PKCS#7 TLV
 
-TEAP {{!RFC7170}} section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
+TEAP {{!RFC7170}} Section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
 
 The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in {{id-kp-cmcra}}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor. 
 
@@ -600,13 +600,13 @@ BRSKI {{!RFC8995}} mandates that the id-kp-cmcRA extended key usage OID is set i
 
 ## Error Handling
 
-ACME {{!RFC8555}} section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{!RFC7170}} section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{!RFC7030}} section 4.2.3 defines how an EST server may return an error encoded in a CMC {{!RFC5272}} response, or may return a human readable error in the response body.
+ACME {{!RFC8555}} Section 6.7 defines multiple errors that may be returned by an ACME server to an ACME client. TEAP {{!RFC7170}} Section 4.2.6 defines multiple errors that may be returned by a TEAP server to a client in an Error TLV. EST {{!RFC7030}} Section 4.2.3 defines how an EST server may return an error encoded in a CMC {{!RFC5272}} response, or may return a human readable error in the response body.
 
 If a client sends a certificate enrollment request to an EST RA for an identifier that the RA does not control, the RA MUST respond with a suitable 4xx HTTP {{!RFC9110}} error code, and MUST NOT send an enrollment request to the ACME server. The RA MAY include a CMCFailInfo {{!RFC5272}} error code of badIdentity.
 
 If a client sends a certificate enrollment request to a TEAP server for an identifier that the TEAP server does not control, the TEAP server MUST respond with an Error TLV with error code 1024 Bad Identity In Certificate Signing Request, and MUST NOT send an enrollment request to the ACME server.
 
-If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{!RFC5272}} section 6.1.4 CMCFailInfo and TEAP {{!RFC7170}} section 4.2.6 error codes is RECOMMENDED.
+If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{!RFC5272}} Section 6.1.4 CMCFailInfo and TEAP {{!RFC7170}} Section 4.2.6 error codes is RECOMMENDED.
 
 ~~~
 +--------------------+-----------------+--------------------------+
@@ -636,7 +636,7 @@ All security considerations from these referenced documents are applicable here:
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
-It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{!RFC8555}} section 8.4.  The security considerations in {{!RFC8555}} says:
+It is expected that the integration mechanisms proposed here will primarily use the DNS-01 challenge documented in {{!RFC8555}} Section 8.4.  The security considerations in {{!RFC8555}} says:
 
    The DNS is a common point of vulnerability for all of these
    challenges.  An entity that can provision false DNS records for a
