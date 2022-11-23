@@ -632,7 +632,7 @@ All security considerations from these referenced documents are applicable here:
 - EST {{!RFC7030}}
 - BRSKI {{!RFC8995}}
 - BRSKI Default Cloud Registrar {{!I-D.ietf-anima-brski-cloud}}
-- TEAP {{?RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
+- TEAP {{!RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
