@@ -442,7 +442,7 @@ Although not explicitly illustrated in this call flow, the Peer and TEAP Server 
     |                         |--------------------------------->|
     |                         |                      |           |
     |                         |                      |           |
-               STEP 2: Establsh EAP Outer Tunnel
+               STEP 2: Establish EAP Outer Tunnel
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
     |   Type=Identity         |                      |           |
