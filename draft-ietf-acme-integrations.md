@@ -673,8 +673,11 @@ When performing challenge fulfilment via writing files to HTTP webservers, write
 The intermediate node (the TEAP-EAP server, or the EST Registrar) should cache the resulting certificates such that if the communication with the pledge is lost, subsequent attempts
 to enroll will result in the cache certificate being returned.
 
-As many ACME servers have per-day, per-IP and per-subjectAltName limits, it is prudent not to request identical certificates too often.
-This could be due to operator or installer error, with multiple configuration resets occurring within a short period of time.
+As many public ACME servers have per-day, per-IP and per-subjectAltName limits, it is prudent not to request identical certificates too often.
+When the limits are hit, it is often a sign of operator or installer error: Multiple configuration resets occurring within a short period of time.
+
+Many private CA relationships use {{RFC8555}} as their enrollment protocol, and in those cases, there may be very different limits.
+But, rate limiting and caching still has some value in protecting external infrastructure.
 
 The cache should be indexed by the complete contents of the Certificate Signing Request,
 and should not persist beyond the notAfter date in the certificate.
