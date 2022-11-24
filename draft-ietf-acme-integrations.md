@@ -111,7 +111,7 @@ The following terms are used in this document:
 - MASA: Manufacturer Authorized Signing Authority as defined in {{!RFC8995}}
 
 - PKCS: Public-Key Cryptography Standards {{?RFC8017}}
-- 
+-
 - PKCS#7: PKCS Cryptographic Message Syntax {{?RFC2315}}
 
 - PKCS#10: PKCS Certification Request  Syntax {{?RFC2986}}
@@ -227,7 +227,7 @@ This example illustrates, and all subsequent examples in this document illustrat
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "client.example.com" |                      |           | 
+    | "client.example.com" |                      |           |
     |<---------------------|                      |           |
 ~~~
 
@@ -319,7 +319,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |                      |                      |           |
     | 200 OK               |                      |           |
     | PKCS#7               |                      |           |
-    | "pledge.example.com" |                      |           | 
+    | "pledge.example.com" |                      |           |
     |<---------------------|                      |           |
 ~~~
 
@@ -513,7 +513,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |<------------------------|                      |           |
     |                         |                      |           |
                STEP 3: Enroll for certificate
-    |                         |                      |           | 
+    |                         |                      |           |
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
     |   {CSR-Attributes TLV}  |                      |           |
@@ -582,7 +582,7 @@ In all integrations, the client MUST send a CSR Attributes request to the EST or
 
 EST {{!RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{!I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID]. 
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID].
 
 Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{!RFC7030}} Section 2.6 for further details.
 
@@ -600,7 +600,7 @@ Therefore, the EST server MUST return only the ACME end entity certificate in th
 
 TEAP {{!RFC7170}} Section 4.2.16 allows for download of a PKCS#7 {{?RFC2315}} certificate chain in response to a TEAP PKCS#10 {{?RFC2986}} TLV request. TEAP also allows for download of multiple PKCS#7 certificates in response to a TEAP Trusted-Server-Root TLV request.
 
-The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in {{id-kp-cmcra}}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor. 
+The TEAP server MUST return the full ACME client certificate chain in the PKCS#7 response to the PKCS#10 TLV request. The TEAP server MUST return the ACME server trust anchor in a PKCS#7 response to a Trusted-Server-Root TLV request. As outlined in {{id-kp-cmcra}}, the TEAP server SHOULD also return the trust anchor that was used for issuing its own identity certificate, if different from the ACME server trust anchor.
 
 ## id-kp-cmcRA
 
