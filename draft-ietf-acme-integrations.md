@@ -52,7 +52,7 @@ ACME {{!RFC8555}} defines a protocol that a certification authority (CA) and an 
 - ACME integration with EST {{!RFC7030}}
 - ACME integration with BRSKI {{!RFC8995}}
 - ACME integration with BRSKI Default Cloud Registrar {{!I-D.ietf-anima-brski-cloud}}
-- ACME integration with TEAP {{!RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
+- ACME integration with TEAP {{!RFC7170}}
 
 The integrations with EST, BRSKI (which is based upon EST), and TEAP enable automated certificate enrollment for devices.
 
@@ -409,13 +409,9 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 
 # ACME Integration with TEAP
 
-TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}} defines extensions to TEAP that includes additional Type-Length-Value (TLV) elements for certificate enrollment and BRSKI handling inside the TEAP tunnel. Neither TEAP {{!RFC7170}} or TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}} define how the TEAP server communicates with the CA.
+TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communication between a peer and a server by using TLS to establish a mutually authenticated tunnel. TEAP enables certificate provisioning within the tunnel. TEAP {{!RFC7170}} does not define how the TEAP server communicates with the CA.
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
-
-The example illustrates the TEAP server sending a Request-Action TLV including a CSR-Attributes TLV instructing the peer to send a CSR-Attributes TLV to the server. This enables the server to indicate what fields the peer should include in the CSR that the peer sends in the PKCS#10 TLV.
-
-Although not explicitly illustrated in this call flow, the Peer and TEAP Server could exchange BRSKI TLVs, and a BRSKI integration and voucher exchange with a MASA server could take place over TEAP. Whether a BRSKI TLV exchange takes place or not does not impact the ACME specific message exchanges.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
@@ -508,21 +504,11 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |   {Request-Action TLV:  |                      |           |
     |     Status=Failure,     |                      |           |
     |     Action=Process-TLV, |                      |           |
-    |     TLV=CSR-Attributes, |                      |           |
     |     TLV=PKCS#10}        |                      |           |
     |<------------------------|                      |           |
     |                         |                      |           |
                STEP 3: Enroll for certificate
     |                         |                      |           |
-    |  EAP-Response/          |                      |           |
-    |   Type=TEAP,            |                      |           |
-    |   {CSR-Attributes TLV}  |                      |           |
-    |------------------------>|                      |           |
-    |                         |                      |           |
-    |  EAP-Request/           |                      |           |
-    |   Type=TEAP,            |                      |           |
-    |   {CSR-Attributes TLV}  |                      |           |
-    |<------------------------|                      |           |
     |                         |                      |           |
     |  EAP-Response/          |                      |           |
     |   Type=TEAP,            |                      |           |
