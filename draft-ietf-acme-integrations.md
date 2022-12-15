@@ -111,7 +111,7 @@ The following terms are used in this document:
 - MASA: Manufacturer Authorized Signing Authority as defined in {{!RFC8995}}
 
 - PKCS: Public-Key Cryptography Standards {{?RFC8017}}
--
+
 - PKCS#7: PKCS Cryptographic Message Syntax {{?RFC2315}}
 
 - PKCS#10: PKCS Certification Request  Syntax {{?RFC2986}}
