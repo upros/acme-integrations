@@ -413,6 +413,8 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
+After establishing the outer TLS tunnel, the TEAP server instructs the client to enrol for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
+
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
 ~~~
@@ -502,7 +504,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |  EAP-Request/           |                      |           |
     |   Type=TEAP,            |                      |           |
     |   {Request-Action TLV:  |                      |           |
-    |     Status=Failure,     |                      |           |
+    |     Status=Success,     |                      |           |
     |     Action=Process-TLV, |                      |           |
     |     TLV=PKCS#10}        |                      |           |
     |<------------------------|                      |           |
