@@ -566,7 +566,7 @@ If the client sends a certificate enrollment request for an identifier in a doma
 
 ## CSR Attributes
 
-In all integrations, the client MUST send a CSR Attributes request to the EST or TEAP server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes, and what attribute values, it expects the client to include in the subsequent CSR request. For example, the server could instruct the peer what Subject Alternative Name entries to include in its CSR.
+In all EST and BRSKI integrations, the client MUST send a CSR Attributes request to the EST server prior to sending a certificate enrollment request. This enables the server to indicate to the client what attributes, and what attribute values, it expects the client to include in the subsequent CSR request. For example, the server could instruct the peer what Subject Alternative Name entries to include in its CSR.
 
 EST {{!RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{!I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
@@ -628,7 +628,7 @@ All security considerations from these referenced documents are applicable here:
 - EST {{!RFC7030}}
 - BRSKI {{!RFC8995}}
 - BRSKI Default Cloud Registrar {{!I-D.ietf-anima-brski-cloud}}
-- TEAP {{!RFC7170}} and TEAP Update and Extensions for Bootstrapping {{!I-D.lear-eap-teap-brski}}
+- TEAP {{!RFC7170}}
 
 Additionally, all Security Considerations in ACME in the following areas are equally applicable to ACME Integrations.
 
