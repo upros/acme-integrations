@@ -239,7 +239,9 @@ BRSKI {{!RFC8995}} is based upon EST {{!RFC7030}} and defines how to autonomical
 
 EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
 
-The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
+The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}.
+
+The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
 Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API. Refer to section {{csr-attributes}} for more details.
 
@@ -253,9 +255,9 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 +--------+             +--------+            | Server |     +------+
     |                      |                 +--------+       |
     |                      |                      |           |
-               NOTE: Pre-Authorization of "example.com" is complete
+         NOTE: Pre-Authorization of "pledge.example.com" is complete
     |                      |                      |           |
-               STEP 1: Pledge requests Voucher
+         STEP 1: Pledge requests Voucher
     |                      |                      |           |
     | POST /requestvoucher |                      |           |
     |--------------------->|                      |           |
@@ -267,7 +269,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     | 200 OK Voucher       |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
-               STEP 2: Pledge enrolls against RA
+         STEP 2: Pledge enrolls against RA
     |                      |                      |           |
     | GET /csrattrs        |                      |           |
     |--------------------->|                      |           |
@@ -285,7 +287,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     | 202 Retry-After      |                      |           |
     |<---------------------|                      |           |
     |                      |                      |           |
-               STEP 3: RA places ACME order
+         STEP 3: RA places ACME order
     |                      |                      |           |
     |                      | POST /newOrder       |           |
     |                      | "pledge.example.com" |           |
@@ -310,7 +312,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |                      | "pledge.example.com" |           |
     |                      |<---------------------|           |
     |                      |                      |           |
-               STEP 4: Pledge retries enroll
+         STEP 4: Pledge retries enroll
     |                      |                      |           |
     | POST /simpleenroll   |                      |           |
     | PCSK#10 CSR          |                      |           |
@@ -330,7 +332,7 @@ BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of 
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. The est-domain leaf defined in {{!I-D.ietf-anima-brski-cloud}} allows the specification of a bootstrap EST domain. In this example, the est-domain extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown.
+For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. The domain ownership exchanges between the RA, ACME and DNS are not shown.
 
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
@@ -342,7 +344,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 +--------+             +--------+           | Server |   |  / MASA  |
     |                      |                +--------+   +----------+
     |                      |                      |           |
-         NOTE: Pre-Authorization of "example.com" is complete
+         NOTE: Pre-Authorization of "pledge.example.com" is complete
     |                      |                      |           |
          STEP 1: Pledge requests Voucher from Cloud Registrar
     |                                                         |
@@ -415,7 +417,7 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-For brevity, it assumes that the TEAP server has previously proven ownership of a parent domain and that peer certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
+For brevity, it assumes that the TEAP server has previously proven ownership of the certificate identifier. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
 
 After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
@@ -427,9 +429,9 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 +------+                +-------------+          | Server |   +-----+
     |                         |                  +--------|      |
     |                         |                      |           |
-               NOTE: Pre-Authorization of "example.com" is complete
+         NOTE: Pre-Authorization of "client.example.com" is complete
     |                         |                      |           |
-               STEP 1: Establish EAP Outer Tunnel
+         STEP 1: Establish EAP Outer Tunnel
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
     |   Type=Identity         |                      |           |
@@ -490,7 +492,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |     TLV=PKCS#10}        |                      |           |
     |<------------------------|                      |           |
     |                         |                      |           |
-               STEP 2: Enroll for certificate
+         STEP 2: Enroll for certificate
     |                         |                      |           |
     |                         |                      |           |
     |  EAP-Response/          |                      |           |
