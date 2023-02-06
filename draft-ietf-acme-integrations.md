@@ -330,6 +330,8 @@ BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of 
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. The est-domain leaf defined in {{!I-D.ietf-anima-brski-cloud}} allows the specification of a bootstrap EST domain. In this example, the est-domain extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
+For brevity, it assumes that the EST RA has previously proven ownership of a parent domain and that pledge certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the RA, ACME and DNS are not shown.
+
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
@@ -338,10 +340,10 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 +--------+             +--------+           +--------+   +----------+
 | Pledge |             | EST RA |           |  ACME  |   | Cloud RA |
 +--------+             +--------+           | Server |   |  / MASA  |
-    |                                       +--------+   +----------+
-    |                                                         |
+    |                      |                +--------+   +----------+
+    |                      |                      |           |
          NOTE: Pre-Authorization of "example.com" is complete
-    |                                                         |
+    |                      |                      |           |
          STEP 1: Pledge requests Voucher from Cloud Registrar
     |                                                         |
     | POST /requestvoucher                                    |
@@ -413,6 +415,8 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
+For brevity, it assumes that the TEAP server has previously proven ownership of a parent domain and that peer certificate identifiers are a subdomain of that parent domain. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
+
 After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
@@ -423,32 +427,9 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
 +------+                +-------------+          | Server |   +-----+
     |                         |                  +--------|      |
     |                         |                      |           |
-               STEP 1: Pre-Authorization of parent domain
+               NOTE: Pre-Authorization of "example.com" is complete
     |                         |                      |           |
-    |                         | POST /newAuthz       |           |
-    |                         |  "example.com"       |           |
-    |                         |--------------------->|           |
-    |                         |                      |           |
-    |                         | 201 authorizations   |           |
-    |                         |<---------------------|           |
-    |                         |                      |           |
-    |                         | Publish DNS TXT      |           |
-    |                         | "example.com"        |           |
-    |                         |--------------------------------->|
-    |                         |                      |           |
-    |                         | POST /challenge      |           |
-    |                         |--------------------->|           |
-    |                         |                      | Verify    |
-    |                         |                      |---------->|
-    |                         | 200 status=valid     |           |
-    |                         |<---------------------|           |
-    |                         |                      |           |
-    |                         | Delete DNS TXT       |           |
-    |                         | "example.com"        |           |
-    |                         |--------------------------------->|
-    |                         |                      |           |
-    |                         |                      |           |
-               STEP 2: Establish EAP Outer Tunnel
+               STEP 1: Establish EAP Outer Tunnel
     |                         |                      |           |
     |  EAP-Request/           |                      |           |
     |   Type=Identity         |                      |           |
@@ -509,7 +490,7 @@ This example illustrates the use of the ACME 'dns-01' challenge type.
     |     TLV=PKCS#10}        |                      |           |
     |<------------------------|                      |           |
     |                         |                      |           |
-               STEP 3: Enroll for certificate
+               STEP 2: Enroll for certificate
     |                         |                      |           |
     |                         |                      |           |
     |  EAP-Response/          |                      |           |
