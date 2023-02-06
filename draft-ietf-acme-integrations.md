@@ -136,7 +136,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
-This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. The example also illustrates using the ACME DNS challenge type, but this integration is not limited to DNS challenges.
+This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of the parent domain "example.com", with the client certificate "client.example.com" being a subdomain under that parent domain. This is an optimization that reduces DNS and ACME traffic overhead when multiple client certificates under that parent domain are required. The RA could of course prove ownership of every explicit client certificate identifier. The example also illustrates using the ACME DNS challenge type, but this integration is not limited to DNS challenges.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -239,7 +239,7 @@ BRSKI {{!RFC8995}} is based upon EST {{!RFC7030}} and defines how to autonomical
 
 EST certificate enrollment may then optionally take place after trust has been established. BRKSI voucher exchange and trust establishment are based on EST extensions and the certificate enrollment part of BRSKI is fully based on EST. Similar to EST, BRSKI does not define how the EST RA communicates with the CA. Therefore, the mechanisms outlined in the previous section for using ACME as the communications protocol between the EST RA and the CA are equally applicable to BRSKI.
 
-The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}.
+The following call flow shows how ACME may be integrated into a full BRSKI voucher plus EST enrollment workflow. For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.example.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}.
 
 The domain ownership exchanges between the RA, ACME and DNS are not shown. Similarly, not all BRSKI interactions are shown and only the key protocol flows involving voucher exchange and EST enrollment are shown.
 
@@ -332,7 +332,7 @@ BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of 
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. The est-domain leaf defined in {{!I-D.ietf-anima-brski-cloud}} allows the specification of a bootstrap EST domain. In this example, the est-domain extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the RA, ACME and DNS are not shown.
+For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.example.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the RA, ACME and DNS are not shown.
 
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
@@ -417,7 +417,7 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-For brevity, it assumes that the TEAP server has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "client.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
+For brevity, it assumes that the TEAP server has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "client.example.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
 
 After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
