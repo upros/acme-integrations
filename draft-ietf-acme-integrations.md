@@ -413,7 +413,7 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-After establishing the outer TLS tunnel, the TEAP server instructs the client to enrol for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
+After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
@@ -644,7 +644,7 @@ It is expected that the TEAP-EAP server/EST Registrar will perform DNS dynamic u
 to a DNS primary server using {{?RFC3007}} Dynamic updates, secured with either SIG(0), or TSIG keys.
 
 A major source of vulnerability is the disclosure of these DNS key records.
-An attacker that has access to them, can provision their own certificates into the
+An attacker that has access to them, can provision their own certificates into
 the name space of the entity.
 
 For many uses, this may allow the attacker to get access to some enterprise resource.
