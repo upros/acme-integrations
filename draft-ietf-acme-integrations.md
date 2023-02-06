@@ -1,7 +1,7 @@
 ---
 
 ipr: trust200902
-title: "ACME Integrations"
+title: "ACME Integrations for Device Certificate Enrollment"
 abbrev: ACME-INTEGRATIONS
 docname: draft-ietf-acme-integrations-latest
 category: info
