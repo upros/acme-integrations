@@ -332,7 +332,7 @@ BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of 
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. The est-domain leaf defined in {{!I-D.ietf-anima-brski-cloud}} allows the specification of a bootstrap EST domain. In this example, the est-domain extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. The domain ownership exchanges between the RA, ACME and DNS are not shown.
+For brevity, it assumes that the EST RA has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "pledge.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the RA, ACME and DNS are not shown.
 
 Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
 
@@ -417,7 +417,7 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-For brevity, it assumes that the TEAP server has previously proven ownership of the certificate identifier. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
+For brevity, it assumes that the TEAP server has previously proven ownership of the certificate identifier. This ownership proof could have been by fulfilling an authorization challenge against the explicit identifier "client.exampe.com", or by fulfilling an authorization challenge against the parent domain "example.com" leveraging {{!I-D.ietf-acme-subdomains}}. The domain ownership exchanges between the TEAP server, ACME and DNS are not shown.
 
 After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
