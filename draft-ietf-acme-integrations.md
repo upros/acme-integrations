@@ -136,7 +136,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 "The nature of communication between an EST server and a CA is not described in this document."
 
-This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain using the 'dns-01' challenge type, with individual client certificates being subdomains under that parent domain. ACME {{!RFC8555}} defines how the ACME client, which in this example is the EST RA, and ACME server interact with the DNS system. Please refer to ACME {{!RFC8555}} for details on all relevant DNS operations.
+This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain using the 'dns-01' challenge type, with individual client certificates being subdomains under that parent domain. ACME {{!RFC8555, Section 8.4}} defines how the ACME client, which in this example is the EST RA, and ACME server interact with the DNS system. Please refer to ACME {{!RFC8555}} for details on all relevant DNS operations.
 
 Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. 
 
