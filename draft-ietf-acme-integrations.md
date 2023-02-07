@@ -641,7 +641,7 @@ It is expected that the integration mechanisms proposed here will primarily use 
    query to a remote server of the attacker's choosing.
 
 It is expected that the TEAP-EAP server/EST Registrar will perform DNS dynamic updates.
-This can be done in a variety of ways, including use of {{?RFC3007}} Dynamic updates, secured with either SIG(0), or TSIG keys.
+This can be done in a variety of ways, including use of {{?RFC3007}} Dynamic updates (with {{?RFC2136}}), secured with either SIG(0) {{?RFC2931}}, or TSIG keys.
 Other proprietary APIs and interactions are also common, secured by some local credential.
 
 A concern is the disclosure of the credential used to update the DNS records.
