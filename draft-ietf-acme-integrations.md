@@ -122,6 +122,18 @@ The following terms are used in this document:
 
 - TLV: Type-Length-Value format defined in TEAP {{!RFC7170}}
 
+# Pre-requisites for Integration
+
+In order for the EST server or TEAP server that is part of the BRSKI Registrar to use ACME to create new certificates it needs to have the ability to satisfy the dns-01 challenges that the ACME will issue.
+
+The EST Registration Authority (RA) is configured with the DNS domain which it will issue certificates. In the examples below, it is "example.com"
+
+The EST RA is configured with a credential that allows it to update the contents of the DNS domain.
+This could be in the form of an {{?RFC3007}} credential such as a TSIG key or a SIG(0) key.
+It could also be some other proprietary credential that allows the EST RA to update the database on the DNS provider directly.
+As a third option, the EST RA could maintain a zone itself, configured as a stealth primary, with a DNS NS zone cut pointing at the EST RA's dns server.
+
+
 # ACME Integration with EST
 
 EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST {{!RFC7030}} Section 1 states:
