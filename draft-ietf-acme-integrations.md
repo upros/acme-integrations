@@ -150,7 +150,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain using the 'dns-01' challenge type, with individual client certificates being subdomains under that parent domain. ACME {{!RFC8555, Section 8.4}} defines how the ACME client, which in this example is the EST RA, and ACME server interact with the DNS system. Please refer to ACME {{!RFC8555}} for details on all relevant DNS operations.
 
-Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. 
+Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -431,7 +431,7 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. 
+After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR.
 
 If the CSR includes an identifier that the TEAP server does not control, the server MUST respond with an Error TLV. Refer to section {{error-handling}} for further details on error handling.
 
