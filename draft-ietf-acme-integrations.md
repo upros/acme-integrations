@@ -131,7 +131,7 @@ The EST Registration Authority (RA) is configured with the DNS domain which it w
 The EST RA is configured with a credential that allows it to update the contents of the DNS domain.
 This could be in the form of an {{?RFC3007}} credential such as a TSIG key or a SIG(0) key.
 It could also be some other proprietary credential that allows the EST RA to update the database on the DNS provider directly.
-As a third option, the EST RA could maintain a zone itself, configured as a stealth primary, with a DNS NS zone cut pointing at the EST RA's dns server.
+As a third option, the EST RA could maintain a zone itself, configured as a stealth primary, with a DNS NS zone cut pointing at the EST RA's DNS server.
 
 
 # ACME Integration with EST
