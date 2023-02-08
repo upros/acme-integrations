@@ -122,6 +122,18 @@ The following terms are used in this document:
 
 - TLV: Type-Length-Value format defined in TEAP {{!RFC7170}}
 
+# Pre-requisites for Integration
+
+In order for the EST server or TEAP server that is part of the BRSKI Registrar to use ACME to create new certificates it needs to have the ability to satisfy the dns-01 challenges that the ACME will issue.
+
+The EST Registration Authority (RA) is configured with the DNS domain which it will issue certificates. In the examples below, it is "example.com"
+
+The EST RA is configured with a credential that allows it to update the contents of the DNS domain.
+This could be in the form of an {{?RFC3007}} credential such as a TSIG key or a SIG(0) key.
+It could also be some other proprietary credential that allows the EST RA to update the database on the DNS provider directly.
+As a third option, the EST RA could maintain a zone itself, configured as a stealth primary, with a DNS NS zone cut pointing at the EST RA's DNS server.
+
+
 # ACME Integration with EST
 
 EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST {{!RFC7030}} Section 1 states:
@@ -141,6 +153,8 @@ This section outlines how ACME could be used for communication between the EST R
 Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
+
+If the CSR includes an identifier that the EST RA does not control, the RA MUST respond with a 4xx HTTP {{!RFC9110}} error code. Refer to section {{error-handling}} for further details on error handling.
 
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
 
@@ -245,6 +259,8 @@ The following call flow shows how ACME may be integrated into a full BRSKI vouch
 
 Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API. Refer to section {{csr-attributes}} for more details.
 
+If the CSR includes an identifier that the EST RA does not control, the RA MUST respond with a 4xx HTTP {{!RFC9110}} error code. Refer to section {{error-handling}} for further details on error handling.
+
 The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some time to complete.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
@@ -331,7 +347,7 @@ BRSKI Cloud Registrar {{!I-D.ietf-anima-brski-cloud}} specifies the behavior of 
 
 BRSKI cloud registrar is flexible and allows for multiple different local domain discovery and redirect scenarios. The est-domain leaf defined in {{!I-D.ietf-anima-brski-cloud}} allows the specification of a bootstrap EST domain. In this example, the est-domain extension allows the cloud registrar to specify the local domain RA that the pledge should connect to for the purposes of EST enrollment.
 
-Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API.
+Similar to the sections above, the client calls EST /csrattrs API before calling the EST /simpleenroll API, and the EST RA must reject CSRs that contain identifiers the RA does not control.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
@@ -413,7 +429,11 @@ TEAP {{!RFC7170}} defines a tunnel-based EAP method that enables secure communic
 
 This section outlines how ACME could be used for communication between the TEAP server and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the TEAP server proving ownership of a parent domain, with individual client certificates being subdomains under that parent domain.
 
-After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR. The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
+After establishing the outer TLS tunnel, the TEAP server instructs the client to enroll for a certificate by sending a PKCS#10 TLV in the body of a Request-Action TLV. The client then replies with a PKCS#10 TLV that contains its CSR.
+
+If the CSR includes an identifier that the TEAP server does not control, the server MUST respond with an Error TLV. Refer to section {{error-handling}} for further details on error handling.
+
+The TEAP server interacts with the ACME server for certificate issuance and returns the certificate in a PKCS#7 TLV as per TEAP {{!RFC7170}}.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
