@@ -138,7 +138,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain using the 'dns-01' challenge type, with individual client certificates being subdomains under that parent domain. ACME {{!RFC8555, Section 8.4}} defines how the ACME client, which in this example is the EST RA, and ACME server interact with the DNS system. Please refer to ACME {{!RFC8555}} for details on all relevant DNS operations.
 
-Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. 
+Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -146,7 +146,7 @@ The call flow illustrates the EST RA returning a 202 Retry-After response to the
 
 This example illustrates, and all subsequent examples in this document illustrate, the use of the ACME 'dns-01' challenge type. This does not preclude the use of any other ACME challenges, however, examples illustrating the use of other challenge types are not documented here.
 
-~~~
+~~~ aasvg
 +--------+             +--------+            +--------+    +-----+
 | Client |             | EST RA |            |  ACME  |    | DNS |
 +--------+             +--------+            | Server |    +-----+
@@ -249,15 +249,14 @@ The call flow illustrates the RA returning a 202 Retry-After response to the ini
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +--------+             +--------+            +--------+     +------+
 | Pledge |             | EST RA |            |  ACME  |     | MASA |
 +--------+             +--------+            | Server |     +------+
     |                      |                 +--------+       |
     |                      |                      |           |
-               NOTE: Pre-Authorization of "example.com" is complete
-    |                      |                      |           |
-               STEP 1: Pledge requests Voucher
+    |   NOTE: Pre-Authorization of "example.com" is complete  |
+    |         STEP 1: Pledge requests Voucher                 |
     |                      |                      |           |
     | POST /requestvoucher |                      |           |
     |--------------------->|                      |           |
@@ -336,15 +335,14 @@ Similar to the sections above, the client calls EST /csrattrs API before calling
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +--------+             +--------+           +--------+   +----------+
 | Pledge |             | EST RA |           |  ACME  |   | Cloud RA |
 +--------+             +--------+           | Server |   |  / MASA  |
     |                                       +--------+   +----------+
     |                                                         |
-         NOTE: Pre-Authorization of "example.com" is complete
-    |                                                         |
-         STEP 1: Pledge requests Voucher from Cloud Registrar
+    |   NOTE: Pre-Authorization of "example.com" is complete  |
+    |   STEP 1: Pledge requests Voucher from Cloud Registrar  |
     |                                                         |
     | POST /requestvoucher                                    |
     |-------------------------------------------------------->|
@@ -419,7 +417,7 @@ After establishing the outer TLS tunnel, the TEAP server instructs the client to
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +------+                +-------------+          +--------+   +-----+
 | Peer |                | TEAP-Server |          |  ACME  |   | DNS |
 +------+                +-------------+          | Server |   +-----+
@@ -606,17 +604,13 @@ If a client sends a certificate enrollment request to a TEAP server for an ident
 
 If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{!RFC5272}} Section 6.1.4 CMCFailInfo and TEAP {{!RFC7170}} Section 4.2.6 error codes is RECOMMENDED.
 
-~~~
-+--------------------+-----------------+--------------------------+
 | ACME               | CMCFailInfo     | TEAP Error Code          |
-+--------------------+-----------------+--------------------------+
-| badCSR             | badRequest      | 1025 Bad CSR             |
-| caa                | badRequest      | 1025 Bad CSR             |
-| rejectedIdentifier | badIdentity     | 1024 Bad Identity In CSR |
-| all other errors   | internalCAError | 1026 Internal CA Error   |
-+--------------------+-----------------+--------------------------+
-
-~~~
+:--------------------|:----------------|:-------------------------|
+badCSR             | badRequest      | 1025 Bad CSR             |
+caa                | badRequest      | 1025 Bad CSR             |
+rejectedIdentifier | badIdentity     | 1024 Bad Identity In CSR |
+all other errors   | internalCAError | 1026 Internal CA Error   |
+|==
 
 # IANA Considerations
 
