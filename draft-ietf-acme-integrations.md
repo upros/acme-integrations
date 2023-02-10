@@ -1,7 +1,7 @@
 ---
 
 ipr: trust200902
-title: "ACME Integrations"
+title: "ACME Integrations for Device Certificate Enrollment"
 abbrev: ACME-INTEGRATIONS
 docname: draft-ietf-acme-integrations-latest
 category: info
@@ -66,7 +66,7 @@ Optionally, ACME for subdomains {{!I-D.ietf-acme-subdomains}} offers a useful op
    14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
-The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduced here:
+The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduced here. Refer to {{?RFC8499}} for further details on these defintions:
 
 - Label: An ordered list of zero or more octets that makes up a
       portion of a domain name.  Using graph theory, a label identifies
@@ -122,6 +122,18 @@ The following terms are used in this document:
 
 - TLV: Type-Length-Value format defined in TEAP {{!RFC7170}}
 
+# Pre-requisites for Integration
+
+In order for the EST server or TEAP server that is part of the BRSKI Registrar to use ACME to create new certificates it needs to have the ability to satisfy the dns-01 challenges that the ACME will issue.
+
+The EST Registration Authority (RA) is configured with the DNS domain which it will issue certificates. In the examples below, it is "example.com"
+
+The EST RA is configured with a credential that allows it to update the contents of the DNS domain.
+This could be in the form of an {{?RFC3007}} credential such as a TSIG key or a SIG(0) key.
+It could also be some other proprietary credential that allows the EST RA to update the database on the DNS provider directly.
+As a third option, the EST RA could maintain a zone itself, configured as a stealth primary, with a DNS NS zone cut pointing at the EST RA's DNS server.
+
+
 # ACME Integration with EST
 
 EST {{!RFC7030}} defines a mechanism for clients to enroll with a PKI Registration Authority by sending Certificate Management over CMS (CMC) {{?RFC5272}} messages over HTTP. EST {{!RFC7030}} Section 1 states:
@@ -140,11 +152,13 @@ This section outlines how ACME could be used for communication between the EST R
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
+If the CSR includes an identifier that the EST RA does not control, the RA MUST respond with a 4xx HTTP {{!RFC9110}} error code. Refer to section {{error-handling}} for further details on error handling.
+
 The call flow illustrates the EST RA returning a 202 Retry-After response to the client's simpleenroll request. This is an optional step and may be necessary if the interactions between the RA and the ACME server take some time to complete. The exact details of when the RA returns a 202 Retry-After are implementation specific.
 
 This example illustrates, and all subsequent examples in this document illustrate, the use of the ACME 'dns-01' challenge type. This does not preclude the use of any other ACME challenges, however, examples illustrating the use of other challenge types are not documented here.
 
-~~~
+~~~ aasvg
 +--------+             +--------+            +--------+    +-----+
 | Client |             | EST RA |            |  ACME  |    | DNS |
 +--------+             +--------+            | Server |    +-----+
@@ -245,11 +259,13 @@ The domain ownership exchanges between the RA, ACME and DNS are not shown. Simil
 
 Similar to the EST section above, the client calls EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the pledge should include in the CSR that the client sends in the /simpleenroll API. Refer to section {{csr-attributes}} for more details.
 
+If the CSR includes an identifier that the EST RA does not control, the RA MUST respond with a 4xx HTTP {{!RFC9110}} error code. Refer to section {{error-handling}} for further details on error handling.
+
 The call flow illustrates the RA returning a 202 Retry-After response to the initial EST /simpleenroll API. This may be appropriate if processing of the /simpleenroll request and ACME interactions takes some time to complete.
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +--------+             +--------+            +--------+     +------+
 | Pledge |             | EST RA |            |  ACME  |     | MASA |
 +--------+             +--------+            | Server |     +------+
@@ -338,7 +354,7 @@ Similar to the sections above, the client calls EST /csrattrs API before calling
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +--------+             +--------+           +--------+   +----------+
 | Pledge |             | EST RA |           |  ACME  |   | Cloud RA |
 +--------+             +--------+           | Server |   |  / MASA  |
@@ -423,7 +439,7 @@ After establishing the outer TLS tunnel, the TEAP server instructs the client to
 
 This example illustrates the use of the ACME 'dns-01' challenge type.
 
-~~~
+~~~ aasvg
 +------+                +-------------+          +--------+   +-----+
 | Peer |                | TEAP-Server |          |  ACME  |   | DNS |
 +------+                +-------------+          | Server |   +-----+
@@ -587,17 +603,13 @@ If a client sends a certificate enrollment request to a TEAP server for an ident
 
 If the EST RA or TEAP server sends an enrollment request to the ACME server and receives an error response from the ACME server, the following mapping from ACME errors to CMC {{!RFC5272}} Section 6.1.4 CMCFailInfo and TEAP {{!RFC7170}} Section 4.2.6 error codes is RECOMMENDED.
 
-~~~
-+--------------------+-----------------+--------------------------+
 | ACME               | CMCFailInfo     | TEAP Error Code          |
-+--------------------+-----------------+--------------------------+
-| badCSR             | badRequest      | 1025 Bad CSR             |
-| caa                | badRequest      | 1025 Bad CSR             |
-| rejectedIdentifier | badIdentity     | 1024 Bad Identity In CSR |
-| all other errors   | internalCAError | 1026 Internal CA Error   |
-+--------------------+-----------------+--------------------------+
-
-~~~
+:--------------------|:----------------|:-------------------------|
+badCSR             | badRequest      | 1025 Bad CSR             |
+caa                | badRequest      | 1025 Bad CSR             |
+rejectedIdentifier | badIdentity     | 1024 Bad Identity In CSR |
+all other errors   | internalCAError | 1026 Internal CA Error   |
+|==
 
 # IANA Considerations
 
@@ -658,6 +670,10 @@ This means that if the private/public keypair changes on the pledge, then a new 
 If the requested SubjectAltName changes, then a new certificate will be requested.
 
 In a case where a device is simply factory reset, and enrolls again, then the same certificate can be returned.
+
+## TLS Channel Bindings
+
+EST {{!RFC7030, Section 3.5}} and TEAP {{!RFC7170, Section 3.8.2}} specify mechanisms to bind the PKCS#10 CSR request with the TLS tunnel used to transport the CSR request by using the tls-unique value from the TLS subsystem. It is RECOMMENDED that implementations use these tls-unique channel binding mechanisms.
 
 --- back
 
