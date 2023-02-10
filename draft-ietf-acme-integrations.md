@@ -692,6 +692,10 @@ If the requested SubjectAltName changes, then a new certificate will be requeste
 
 In a case where a device is simply factory reset, and enrolls again, then the same certificate can be returned.
 
+## TLS Channel Bindings
+
+EST {{!RFC7030, Section 3.5}} and TEAP {{!RFC7170, Section 3.8.2}} specify mechanisms to bind the PKCS#10 CSR request with the TLS tunnel used to transport the CSR request by using the tls-unique value from the TLS subsystem. It is RECOMMENDED that implementations use these tls-unique channel binding mechanisms.
+
 --- back
 
 
