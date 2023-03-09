@@ -97,6 +97,7 @@ The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduc
 The following terms are used in this document:
 
 - BRSKI: Bootstrapping Remote Secure Key Infrastructures {{!RFC8995}}
+- Pledge:  from {{?RFC8366}}, the prospective device attempting to find and securely join a domain.  When shipped, it only trusts authorized representatives of the manufacturer.
 
 - Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
 
