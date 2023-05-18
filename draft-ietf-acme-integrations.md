@@ -4,7 +4,7 @@ ipr: trust200902
 title: "ACME Integrations for Device Certificate Enrollment"
 abbrev: ACME-INTEGRATIONS
 docname: draft-ietf-acme-integrations-latest
-category: info
+category: std
 
 stand_alone: yes
 pi: [toc, sortrefs, symrefs]
