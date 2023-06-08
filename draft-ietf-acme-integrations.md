@@ -66,11 +66,10 @@ Optionally, ACME for subdomains {{!I-D.ietf-acme-subdomains}} offers a useful op
    14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
-The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduced here. Refer to {{?RFC8499}} for further details on these defintions:
+The following terms are defined in DNS Terminology {{?RFC8499, Section 2}} and are reproduced here in abridged form:
 
 - Label: An ordered list of zero or more octets that makes up a
-      portion of a domain name.  Using graph theory, a label identifies
-      one node in a portion of the graph of all possible domain names.
+      portion of a domain name.
 
 - Domain Name: An ordered list of one or more labels.
 
@@ -85,14 +84,9 @@ The following terms are defined in DNS Terminology {{?RFC8499}} and are reproduc
 
 - Fully-Qualified Domain Name (FQDN):  This is often just a clear way
       of saying the same thing as "domain name of a node", as outlined
-      above.  However, the term is ambiguous.  Strictly speaking, a
-      fully-qualified domain name would include every label, including
-      the zero-length label of the root: such a name would be written
-      "www.example.net." (note the terminating dot).  But, because every
-      name eventually shares the common root, names are often written
-      relative to the root (such as "www.example.net") and are still
-      called "fully qualified".  This term first appeared in {{?RFC0819}}.
-      In this document, names are often written relative to the root.
+      above.
+      However, the term is sometimes ambiguous as explained in {{?RFC8499}}.
+      In this document, names are written relative to the root.
 
 The following terms are used in this document:
 
