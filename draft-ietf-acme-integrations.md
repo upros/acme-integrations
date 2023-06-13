@@ -66,34 +66,19 @@ Optionally, ACME for subdomains {{!I-D.ietf-acme-subdomains}} offers a useful op
    14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all
    capitals, as shown here.
 
-The following terms are defined in DNS Terminology {{?RFC8499, Section 2}} and are reproduced here in abridged form:
+The following terms are defined in DNS Terminology {{?RFC8499, Section 2}} and used in this document. Please refer to {{?RFC8499, Section 2}} for a definition of these terms.
 
-- Label: An ordered list of zero or more octets that makes up a
-      portion of a domain name.
-
-- Domain Name: An ordered list of one or more labels.
-
-- Subdomain: "A domain is a subdomain of another domain if it is
-      contained within that domain.  This relationship can be tested by
-      seeing if the subdomain's name ends with the containing domain's
-      name."  (Quoted from {{?RFC1034}}, Section 3.1) For example, in the
-      host name "nnn.mmm.example.com", both "mmm.example.com" and
-      "nnn.mmm.example.com" are subdomains of "example.com".  Note that
-      the comparisons here are done on whole labels; that is,
-      "ooo.example.com" is not a subdomain of "oo.example.com".
-
-- Fully-Qualified Domain Name (FQDN):  This is often just a clear way
-      of saying the same thing as "domain name of a node", as outlined
-      above.
-      However, the term is sometimes ambiguous as explained in {{?RFC8499}}.
-      In this document, names are written relative to the root.
+- Label
+- Domain Name
+- Subdomain
+- Fully-Qualified Domain Name (FQDN)
 
 The following terms are used in this document:
 
 - BRSKI: Bootstrapping Remote Secure Key Infrastructures {{!RFC8995}}
 - Pledge:  from {{?RFC8366}}, the prospective device attempting to find and securely join a domain.  When shipped, it only trusts authorized representatives of the manufacturer.
 
-- Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Roots CAs and Subordinate CAs
+- Certification Authority (CA): An organization that is responsible for the creation, issuance, revocation, and management of Certificates. The term applies equally to both Root CAs and Subordinate CAs
 
 - CMS: Cryptographic Message Syntax {{?RFC5652}}
 
@@ -121,7 +106,7 @@ The following terms are used in this document:
 
 In order for the EST server or TEAP server that is part of the BRSKI Registrar to use ACME to create new certificates it needs to have the ability to satisfy the dns-01 challenges that the ACME will issue.
 
-The EST Registration Authority (RA) is configured with the DNS domain which it will issue certificates. In the examples below, it is "example.com"
+The EST Registration Authority (RA) is configured with the DNS domain for which it will issue certificates. In the examples below, it is "example.com"
 
 The EST RA is configured with a credential that allows it to update the contents of the DNS domain.
 This could be in the form of an {{?RFC3007}} credential such as a TSIG key or a SIG(0) key.
