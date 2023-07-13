@@ -130,7 +130,7 @@ When the CA is logically "behind" the EST RA, EST does not specify how the RA co
 
 This section outlines how ACME could be used for communication between the EST RA and the CA. The example call flow leverages {{!I-D.ietf-acme-subdomains}} and shows the RA proving ownership of a parent domain using the 'dns-01' challenge type, with individual client certificates being subdomains under that parent domain. ACME {{!RFC8555, Section 8.4}} defines how the ACME client, which in this example is the EST RA, and ACME server interact with the DNS system. Please refer to ACME {{!RFC8555}} for details on all relevant DNS operations.
 
-Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier. 
+Use of {{!I-D.ietf-acme-subdomains}} is an optional optimization that reduces DNS and ACME traffic overhead. The RA could of course prove ownership of every explicit client certificate identifier.
 
 The call flow illustrates the client calling the EST /csrattrs API before calling the EST /simpleenroll API. This enables the server to indicate what fields the client should include in the CSR that the client sends in the /simpleenroll API. CSR Attributes handling are discussed in {{csr-attributes}}.
 
@@ -551,7 +551,7 @@ In all EST and BRSKI integrations, the client MUST send a CSR Attributes request
 
 EST {{!RFC7030}} is not clear on how the CSR Attributes response should be structured, and in particular is not clear on how a server can instruct a client to include specific attribute values in its CSR. {{!I-D.ietf-lamps-rfc7030-csrattrs}} clarifies how a server can use CSR Attributes response to specify specific values for attributes that the client should include in its CSR.
 
-Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-use-san}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-use-san}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID].
+Servers MUST use this mechanism to tell the client what identifiers to include in CSR request. ACME {{!RFC8555}} allows the identifier to be included in either CSR Subject or Subject Alternative Name fields, however {{!I-D.ietf-uta-rfc6125bis}} states that Subject Alternative Name field MUST be used. This document aligns with {{!I-D.ietf-uta-rfc6125bis}} and Subject Alternate Name field MUST be used. The identifier MUST be a subdomain of a domain that the server has control over and can fulfill ACME challenges against. The leftmost part of the identifier MAY be a field that the client presented to the server in an IEEE 802.1AR [IDevID].
 
 Servers MAY use this field to instruct the client to include other attributes such as specific policy OIDs. Refer to EST {{!RFC7030}} Section 2.6 for further details.
 
