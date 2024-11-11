@@ -23,7 +23,7 @@ author:
  -
     ins: R. Shekh-Yusef
     name: Rifaat Shekh-Yusef
-    org: Ernst & Young
+    org: Ciena
     email: rifaat.s.ietf@gmail.com
  -
     ins: M. Richardson
